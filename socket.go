@@ -30,7 +30,6 @@ func (s *Socket) Open(port int) error {
 // Close closes the underlying UDP socket
 func (s *Socket) Close() {
 	if s.conn != nil {
-		fmt.Println("closing socket")
 		s.conn.Close()
 	}
 	s.conn = nil
@@ -95,7 +94,6 @@ func (s *Socket) Receive(addr *net.UDPAddr, data []byte) int {
 	case err == nil:
 		break
 	case ok && netErr.Timeout():
-		fmt.Printf("Socket.Receive timeout\n")
 		break
 	default:
 		fmt.Printf("Socket.Receive error: %v\n", err)

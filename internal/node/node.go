@@ -5,14 +5,14 @@ import (
 	"net"
 	"time"
 
-	"github.com/aurelien-rainone/udp"
+	"github.com/aurelien-rainone/udpnet"
 )
 
 func main() {
 	port := 30000
 	fmt.Printf("creating socket on port %d\n", port)
 
-	var socket udp.Socket
+	var socket udpnet.Socket
 	if err := socket.Open(port); err != nil {
 		fmt.Printf("failed to create Socket: %v\n", err)
 		return

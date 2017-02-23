@@ -5,7 +5,7 @@ import (
 	"net"
 	"time"
 
-	"github.com/aurelien-rainone/udp"
+	"github.com/aurelien-rainone/udpnet"
 )
 
 type dummyCallback struct{}
@@ -25,7 +25,7 @@ const (
 )
 
 func main() {
-	connection := udp.NewConn(dummyCallback{}, protocolId, timeout)
+	connection := udpnet.NewConn(dummyCallback{}, protocolId, timeout)
 
 	if !connection.Start(clientPort) {
 		fmt.Printf("could not start connection on port %d\n", clientPort)

@@ -5,13 +5,13 @@ import (
 	"net"
 	"time"
 
-	"github.com/aurelien-rainone/udp"
+	"github.com/aurelien-rainone/udpnet"
 )
 
 func main() {
 	var (
 		port   = 30000
-		socket udp.Socket
+		socket udpnet.Socket
 	)
 
 	fmt.Printf("creating socket on port %d\n", port)

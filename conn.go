@@ -1,4 +1,4 @@
-package udp
+package udpnet
 
 import (
 	"errors"
@@ -34,6 +34,7 @@ const (
 	connected
 )
 
+// Conn represents a Connection between two distant parties.
 type Conn struct {
 	protocolId         uint
 	timeout            time.Duration

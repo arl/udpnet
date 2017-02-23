@@ -40,7 +40,7 @@ func TestSocketFailsOnSamePort(t *testing.T) {
 	err := b.Open(30000)
 	if err == nil {
 		defer b.Close()
-		t.Fatalf("got b.Open(30000) = nil, want != nil", err)
+		t.Fatalf("got b.Open(30000) = nil, want != nil")
 	}
 	if e, ok := err.(*net.OpError); !ok {
 		t.Fatalf("got b.Open(30000) = %v , want net.OpError", e)

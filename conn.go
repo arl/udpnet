@@ -128,7 +128,6 @@ func (c *Conn) GetMode() ConnMode {
 	return c.mode
 }
 
-//virtual
 func (c *Conn) Update(dt time.Duration) {
 	c.timeoutAccumulator += dt
 	if c.timeoutAccumulator > c.timeout {
@@ -148,7 +147,6 @@ func (c *Conn) Update(dt time.Duration) {
 	}
 }
 
-//virtual
 func (c *Conn) SendPacket(data []byte) error {
 	if c.address == nil {
 		return errors.New("address not set")
@@ -162,7 +160,6 @@ func (c *Conn) SendPacket(data []byte) error {
 	return c.socket.Send(c.address, packet)
 }
 
-//virtual
 func (c *Conn) ReceivePacket(data []byte) int {
 	packet := make([]byte, len(data)+4)
 	var sender net.UDPAddr

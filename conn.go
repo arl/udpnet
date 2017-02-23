@@ -4,6 +4,7 @@ import (
 	"errors"
 	"fmt"
 	"net"
+	"time"
 )
 
 // ConnCallback is the interface implemented by objects that handles the main
@@ -35,17 +36,17 @@ const (
 
 type Conn struct {
 	protocolId         uint
-	timeout            float64
+	timeout            time.Duration
 	running            bool
 	mode               ConnMode
 	state              connState
 	socket             Socket
-	timeoutAccumulator float64
+	timeoutAccumulator time.Duration
 	address            *net.UDPAddr
 	cb                 ConnCallback
 }
 
-func NewConn(cb ConnCallback, protocolId uint, timeout float64) *Conn {
+func NewConn(cb ConnCallback, protocolId uint, timeout time.Duration) *Conn {
 	c := &Conn{
 		protocolId: protocolId,
 		timeout:    timeout,
@@ -127,8 +128,8 @@ func (c *Conn) GetMode() ConnMode {
 }
 
 //virtual
-func (c *Conn) Update(deltaTime float64) {
-	c.timeoutAccumulator += deltaTime
+func (c *Conn) Update(dt time.Duration) {
+	c.timeoutAccumulator += dt
 	if c.timeoutAccumulator > c.timeout {
 		if c.state == connecting {
 			fmt.Printf("connect timed out\n")
@@ -191,7 +192,7 @@ func (c *Conn) ReceivePacket(data []byte) int {
 			c.state = connected
 			c.cb.OnConnect()
 		}
-		c.timeoutAccumulator = 0.0
+		c.timeoutAccumulator = time.Duration(0)
 		copy(data, packet[4:])
 		return len(data) - 4
 	}
@@ -204,6 +205,6 @@ func (c *Conn) HeaderSize() int {
 
 func (c *Conn) clearData() {
 	c.state = disconnected
-	c.timeoutAccumulator = 0.0
+	c.timeoutAccumulator = time.Duration(0)
 	c.address = nil
 }

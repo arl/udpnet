@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"net"
 	"testing"
+	"time"
 
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
@@ -31,8 +32,8 @@ var (
 
 func TestConnectionJoin(t *testing.T) {
 	const (
-		DeltaTime = 0.001
-		TimeOut   = 1.5
+		DeltaTime = time.Millisecond
+		TimeOut   = time.Duration(1500) * time.Millisecond
 	)
 
 	client := NewConn(dummyCallback{}, protocolId, TimeOut)
@@ -85,8 +86,8 @@ func TestConnectionJoin(t *testing.T) {
 
 func TestConnectionJoinTimeout(t *testing.T) {
 	const (
-		DeltaTime = 0.001
-		TimeOut   = 0.1
+		DeltaTime = time.Millisecond
+		TimeOut   = time.Duration(100) * time.Millisecond
 	)
 
 	client := NewConn(dummyCallback{}, protocolId, TimeOut)
@@ -120,8 +121,8 @@ func TestConnectionJoinTimeout(t *testing.T) {
 
 func TestConnectionJoinBusy(t *testing.T) {
 	const (
-		DeltaTime = 0.001
-		TimeOut   = 0.1
+		DeltaTime = time.Millisecond
+		TimeOut   = time.Duration(100) * time.Millisecond
 	)
 
 	// connect client to server
@@ -227,8 +228,8 @@ func TestConnectionJoinBusy(t *testing.T) {
 
 func TestConnectionRejoin(t *testing.T) {
 	const (
-		DeltaTime = 0.001
-		TimeOut   = 0.1
+		DeltaTime = time.Millisecond
+		TimeOut   = time.Duration(100) * time.Millisecond
 	)
 
 	// connect client to server
@@ -348,8 +349,8 @@ func TestConnectionRejoin(t *testing.T) {
 
 func TestConnectionPayload(t *testing.T) {
 	const (
-		DeltaTime = 0.001
-		TimeOut   = 0.1
+		DeltaTime = time.Millisecond
+		TimeOut   = time.Duration(100) * time.Millisecond
 	)
 
 	client := NewConn(dummyCallback{}, protocolId, TimeOut)

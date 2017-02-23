@@ -9,15 +9,12 @@ import (
 )
 
 func main() {
-	// create socket
-
 	var (
 		port   = 30000
 		socket udp.Socket
 	)
 
 	fmt.Printf("creating socket on port %d\n", port)
-
 	if err := socket.Open(port); err != nil {
 		fmt.Printf("failed to create Socket: %v\n", err)
 		return

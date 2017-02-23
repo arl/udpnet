@@ -8,41 +8,32 @@ import (
 	"github.com/aurelien-rainone/udp"
 )
 
-type DummyCallback struct{}
+type dummyCallback struct{}
 
-func (dc DummyCallback) OnStart() {
-	fmt.Println("start")
-}
-func (dc DummyCallback) OnStop() {
-	fmt.Println("stop")
-}
-func (dc DummyCallback) OnConnect() {
-	fmt.Println("connect")
-}
-func (dc DummyCallback) OnDisconnect() {
-	fmt.Println("disconnect")
-}
+func (dc dummyCallback) OnStart()      { fmt.Println("start") }
+func (dc dummyCallback) OnStop()       { fmt.Println("stop") }
+func (dc dummyCallback) OnConnect()    { fmt.Println("connect") }
+func (dc dummyCallback) OnDisconnect() { fmt.Println("disconnect") }
 
 const (
-	ServerPort = 30000
-	ClientPort = 30001
-	ProtocolId = 0x99887766
-	DeltaTime  = time.Duration(250) * time.Millisecond
-	SendRate   = time.Duration(250) * time.Millisecond
-	TimeOut    = time.Duration(10) * time.Second
+	serverPort = 30000
+	clientPort = 30001
+	protocolId = 0x99887766
+	deltaTime  = time.Duration(250) * time.Millisecond
+	sendRate   = time.Duration(250) * time.Millisecond
+	timeout    = time.Duration(10) * time.Second
 )
 
 func main() {
+	connection := udp.NewConn(dummyCallback{}, protocolId, timeout)
 
-	connection := udp.NewConn(DummyCallback{}, ProtocolId, TimeOut)
-
-	if !connection.Start(ClientPort) {
-		fmt.Printf("could not start connection on port %d\n", ClientPort)
+	if !connection.Start(clientPort) {
+		fmt.Printf("could not start connection on port %d\n", clientPort)
 		return
 	}
 	defer connection.Stop()
 
-	addr, err := net.ResolveUDPAddr("udp", fmt.Sprintf("127.0.0.1:%d", ServerPort))
+	addr, err := net.ResolveUDPAddr("udp", fmt.Sprintf("127.0.0.1:%d", serverPort))
 	if err != nil {
 		fmt.Printf("could not resolve server address, %v\n", err)
 		return
@@ -73,8 +64,7 @@ func main() {
 			fmt.Printf("received packet from server\n")
 		}
 
-		connection.Update(DeltaTime)
-
-		time.Sleep(DeltaTime)
+		connection.Update(deltaTime)
+		time.Sleep(deltaTime)
 	}
 }

@@ -10,10 +10,6 @@ import (
 
 func main() {
 	port := 30000
-
-	//if ( argc == 2 )
-	//port = atoi( argv[1] );
-
 	fmt.Printf("creating socket on port %d\n", port)
 
 	var socket udp.Socket

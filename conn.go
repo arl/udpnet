@@ -57,14 +57,7 @@ func NewConn(cb ConnCallback, protocolId uint, timeout float64) *Conn {
 	return c
 }
 
-//virtual ~Connection()
-//{
-//if ( IsRunning() )
-//Stop();
-//}
-
 func (c *Conn) Start(port int) bool {
-	//assert( !running );
 	fmt.Printf("start connection on port %d\n", port)
 	if err := c.socket.Open(port); err != nil {
 		return false
@@ -75,7 +68,6 @@ func (c *Conn) Start(port int) bool {
 }
 
 func (c *Conn) Stop() {
-	//assert( running );
 	fmt.Printf("stop connection\n")
 	connected := c.IsConnected()
 	c.clearData()
@@ -136,7 +128,6 @@ func (c *Conn) GetMode() ConnMode {
 
 //virtual
 func (c *Conn) Update(deltaTime float64) {
-	//assert( running );
 	c.timeoutAccumulator += deltaTime
 	if c.timeoutAccumulator > c.timeout {
 		if c.state == connecting {
@@ -157,7 +148,6 @@ func (c *Conn) Update(deltaTime float64) {
 
 //virtual
 func (c *Conn) SendPacket(data []byte) error {
-	//assert( running );
 	if c.address == nil {
 		return errors.New("address not set")
 	}
@@ -172,7 +162,6 @@ func (c *Conn) SendPacket(data []byte) error {
 
 //virtual
 func (c *Conn) ReceivePacket(data []byte) int {
-	//assert( running );
 	packet := make([]byte, len(data)+4)
 	var sender net.UDPAddr
 	bytesRead := c.socket.Receive(&sender, packet)

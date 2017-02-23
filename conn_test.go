@@ -12,26 +12,27 @@ import (
 
 type dummyCallback struct{}
 
-func (dc dummyCallback) OnStart() {
-	fmt.Println("start")
-}
-func (dc dummyCallback) OnStop() {
-	fmt.Println("stop")
-}
-func (dc dummyCallback) OnConnect() {
-	fmt.Println("connect")
-}
-func (dc dummyCallback) OnDisconnect() {
-	fmt.Println("disconnect")
-}
+func (dc dummyCallback) OnStart()      {}
+func (dc dummyCallback) OnStop()       {}
+func (dc dummyCallback) OnConnect()    {}
+func (dc dummyCallback) OnDisconnect() {}
+
+const (
+	ServerPort = 30000
+	ClientPort = 30001
+	ProtocolId = 0x11112222
+)
+
+var (
+	clientPacket = []byte("client to server")
+	serverPacket = []byte("server to client")
+	busyPacket   = []byte("i'm so busy!")
+)
 
 func TestConnectionJoin(t *testing.T) {
 	const (
-		ServerPort = 30000
-		ClientPort = 30001
-		ProtocolId = 0x11112222
-		DeltaTime  = 0.001
-		TimeOut    = 1.5
+		DeltaTime = 0.001
+		TimeOut   = 1.5
 	)
 
 	client := NewConn(dummyCallback{}, ProtocolId, TimeOut)
@@ -55,10 +56,7 @@ func TestConnectionJoin(t *testing.T) {
 			break
 		}
 
-		clientPacket := []byte("client to server")
 		client.SendPacket(clientPacket)
-
-		serverPacket := []byte("server to client")
 		server.SendPacket(serverPacket)
 
 		for {
@@ -87,11 +85,8 @@ func TestConnectionJoin(t *testing.T) {
 
 func TestConnectionJoinTimeout(t *testing.T) {
 	const (
-		ServerPort = 30000
-		ClientPort = 30001
-		ProtocolId = 0x11112222
-		DeltaTime  = 0.001
-		TimeOut    = 0.1
+		DeltaTime = 0.001
+		TimeOut   = 0.1
 	)
 
 	client := NewConn(dummyCallback{}, ProtocolId, TimeOut)
@@ -106,7 +101,6 @@ func TestConnectionJoinTimeout(t *testing.T) {
 			break
 		}
 
-		clientPacket := []byte("client to server")
 		client.SendPacket(clientPacket)
 
 		for {
@@ -126,11 +120,8 @@ func TestConnectionJoinTimeout(t *testing.T) {
 
 func TestConnectionJoinBusy(t *testing.T) {
 	const (
-		ServerPort = 30000
-		ClientPort = 30001
-		ProtocolId = 0x11112222
-		DeltaTime  = 0.001
-		TimeOut    = 0.1
+		DeltaTime = 0.001
+		TimeOut   = 0.1
 	)
 
 	// connect client to server
@@ -156,10 +147,7 @@ func TestConnectionJoinBusy(t *testing.T) {
 			break
 		}
 
-		clientPacket := []byte("client to server")
 		client.SendPacket(clientPacket)
-
-		serverPacket := []byte("server to client")
 		server.SendPacket(serverPacket)
 
 		for {
@@ -198,13 +186,8 @@ func TestConnectionJoinBusy(t *testing.T) {
 			break
 		}
 
-		clientPacket := []byte("client to server")
 		client.SendPacket(clientPacket)
-
-		serverPacket := []byte("server to client")
 		server.SendPacket(serverPacket)
-
-		busyPacket := []byte("i'm so busy!")
 		busy.SendPacket(busyPacket)
 
 		for {
@@ -244,11 +227,8 @@ func TestConnectionJoinBusy(t *testing.T) {
 
 func TestConnectionRejoin(t *testing.T) {
 	const (
-		ServerPort = 30000
-		ClientPort = 30001
-		ProtocolId = 0x11112222
-		DeltaTime  = 0.001
-		TimeOut    = 0.1
+		DeltaTime = 0.001
+		TimeOut   = 0.1
 	)
 
 	// connect client to server
@@ -274,10 +254,7 @@ func TestConnectionRejoin(t *testing.T) {
 			break
 		}
 
-		clientPacket := []byte("client to server")
 		client.SendPacket(clientPacket)
-
-		serverPacket := []byte("server to client")
 		server.SendPacket(serverPacket)
 
 		for {
@@ -342,10 +319,7 @@ func TestConnectionRejoin(t *testing.T) {
 			break
 		}
 
-		clientPacket := []byte("client to server")
 		client.SendPacket(clientPacket)
-
-		serverPacket := []byte("server to client")
 		server.SendPacket(serverPacket)
 
 		for {
@@ -374,11 +348,8 @@ func TestConnectionRejoin(t *testing.T) {
 
 func TestConnectionPayload(t *testing.T) {
 	const (
-		ServerPort = 30000
-		ClientPort = 30001
-		ProtocolId = 0x11112222
-		DeltaTime  = 0.001
-		TimeOut    = 0.1
+		DeltaTime = 0.001
+		TimeOut   = 0.1
 	)
 
 	client := NewConn(dummyCallback{}, ProtocolId, TimeOut)
@@ -402,10 +373,7 @@ func TestConnectionPayload(t *testing.T) {
 			break
 		}
 
-		clientPacket := []byte("client to server")
 		client.SendPacket(clientPacket)
-
-		serverPacket := []byte("server to client")
 		server.SendPacket(serverPacket)
 
 		for {

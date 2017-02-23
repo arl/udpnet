@@ -191,8 +191,8 @@ func (c *Conn) ReceivePacket(data []byte) int {
 			c.cb.OnConnect()
 		}
 		c.timeoutAccumulator = time.Duration(0)
-		copy(data, packet[4:])
-		return len(data) - 4
+		copy(data, packet[4:bytesRead])
+		return bytesRead - 4
 	}
 	return 0
 }

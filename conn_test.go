@@ -30,16 +30,14 @@ func TestConnectionJoin(t *testing.T) {
 		ClientPort = 30001
 		ProtocolId = 0x11112222
 		DeltaTime  = 0.001
-		SendRate   = 0.25
 		TimeOut    = 1.5
 	)
 
 	client := NewConn(dummyCallback{}, ProtocolId, TimeOut)
-	server := NewConn(dummyCallback{}, ProtocolId, TimeOut)
-
 	require.True(t, client.Start(ClientPort), "couldn't start client connection")
 	defer client.Stop()
 
+	server := NewConn(dummyCallback{}, ProtocolId, TimeOut)
 	require.True(t, server.Start(ServerPort), "couldn't start server connection")
 	defer server.Stop()
 
@@ -84,4 +82,43 @@ func TestConnectionJoin(t *testing.T) {
 
 	assert.True(t, client.IsConnected(), "client should be connected")
 	assert.True(t, server.IsConnected(), "server should be connected")
+}
+
+func TestConnectionJoinTimeout(t *testing.T) {
+	const (
+		ServerPort = 30000
+		ClientPort = 30001
+		ProtocolId = 0x11112222
+		DeltaTime  = 0.001
+		TimeOut    = 0.1
+	)
+
+	client := NewConn(dummyCallback{}, ProtocolId, TimeOut)
+	require.True(t, client.Start(ClientPort), "couldn't start client connection")
+	defer client.Stop()
+
+	cAddr, _ := net.ResolveUDPAddr("udp", fmt.Sprintf("127.0.0.1:%d", ServerPort))
+	client.Connect(cAddr)
+
+	for {
+		if !client.IsConnecting() {
+			break
+		}
+
+		clientPacket := []byte("client to server")
+		client.SendPacket(clientPacket)
+
+		for {
+			var packet [256]byte
+			bytesRead := client.ReceivePacket(packet[:])
+			if bytesRead == 0 {
+				break
+			}
+		}
+
+		client.Update(DeltaTime)
+	}
+
+	assert.False(t, client.IsConnected(), "client should not be connected")
+	assert.True(t, client.ConnectFailed(), "client.ConnectFailed() should return true")
 }

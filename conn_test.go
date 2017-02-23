@@ -1,6 +1,7 @@
 package udp
 
 import (
+	"bytes"
 	"fmt"
 	"net"
 	"testing"
@@ -361,6 +362,68 @@ func TestConnectionRejoin(t *testing.T) {
 			if bytesRead == 0 {
 				break
 			}
+		}
+
+		client.Update(DeltaTime)
+		server.Update(DeltaTime)
+	}
+
+	assert.True(t, client.IsConnected(), "client should be connected")
+	assert.True(t, server.IsConnected(), "server should be connected")
+}
+
+func TestConnectionPayload(t *testing.T) {
+	const (
+		ServerPort = 30000
+		ClientPort = 30001
+		ProtocolId = 0x11112222
+		DeltaTime  = 0.001
+		TimeOut    = 0.1
+	)
+
+	client := NewConn(dummyCallback{}, ProtocolId, TimeOut)
+	require.True(t, client.Start(ClientPort), "couldn't start client connection")
+	defer client.Stop()
+
+	server := NewConn(dummyCallback{}, ProtocolId, TimeOut)
+	require.True(t, server.Start(ServerPort), "couldn't start server connection")
+	defer server.Stop()
+
+	cAddr, _ := net.ResolveUDPAddr("udp", fmt.Sprintf("127.0.0.1:%d", ServerPort))
+	client.Connect(cAddr)
+	server.Listen()
+
+	for {
+		if client.IsConnected() && server.IsConnected() {
+			break
+		}
+
+		if !client.IsConnecting() && client.ConnectFailed() {
+			break
+		}
+
+		clientPacket := []byte("client to server")
+		client.SendPacket(clientPacket)
+
+		serverPacket := []byte("server to client")
+		server.SendPacket(serverPacket)
+
+		for {
+			var packet [256]byte
+			bytesRead := client.ReceivePacket(packet[:])
+			if bytesRead == 0 {
+				break
+			}
+			assert.Equal(t, "server to client", string(bytes.Trim(packet[:], "\x00")))
+		}
+
+		for {
+			var packet [256]byte
+			bytesRead := server.ReceivePacket(packet[:])
+			if bytesRead == 0 {
+				break
+			}
+			assert.Equal(t, "client to server", string(bytes.Trim(packet[:], "\x00")))
 		}
 
 		client.Update(DeltaTime)

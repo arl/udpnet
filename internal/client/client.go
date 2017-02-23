@@ -27,9 +27,9 @@ const (
 	ServerPort = 30000
 	ClientPort = 30001
 	ProtocolId = 0x99887766
-	DeltaTime  = 0.25
-	SendRate   = 0.25
-	TimeOut    = 10.0
+	DeltaTime  = time.Duration(250) * time.Millisecond
+	SendRate   = time.Duration(250) * time.Millisecond
+	TimeOut    = time.Duration(10) * time.Second
 )
 
 func main() {
@@ -75,6 +75,6 @@ func main() {
 
 		connection.Update(DeltaTime)
 
-		time.Sleep(time.Duration(float64(time.Second) * DeltaTime))
+		time.Sleep(DeltaTime)
 	}
 }

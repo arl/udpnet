@@ -18,9 +18,9 @@ func (dc dummyCallback) OnConnect()    {}
 func (dc dummyCallback) OnDisconnect() {}
 
 const (
-	ServerPort = 30000
-	ClientPort = 30001
-	ProtocolId = 0x11112222
+	serverPort = 30000
+	clientPort = 30001
+	protocolId = 0x11112222
 )
 
 var (
@@ -35,15 +35,15 @@ func TestConnectionJoin(t *testing.T) {
 		TimeOut   = 1.5
 	)
 
-	client := NewConn(dummyCallback{}, ProtocolId, TimeOut)
-	require.True(t, client.Start(ClientPort), "couldn't start client connection")
+	client := NewConn(dummyCallback{}, protocolId, TimeOut)
+	require.True(t, client.Start(clientPort), "couldn't start client connection")
 	defer client.Stop()
 
-	server := NewConn(dummyCallback{}, ProtocolId, TimeOut)
-	require.True(t, server.Start(ServerPort), "couldn't start server connection")
+	server := NewConn(dummyCallback{}, protocolId, TimeOut)
+	require.True(t, server.Start(serverPort), "couldn't start server connection")
 	defer server.Stop()
 
-	cAddr, _ := net.ResolveUDPAddr("udp", fmt.Sprintf("127.0.0.1:%d", ServerPort))
+	cAddr, _ := net.ResolveUDPAddr("udp", fmt.Sprintf("127.0.0.1:%d", serverPort))
 	client.Connect(cAddr)
 	server.Listen()
 
@@ -89,11 +89,11 @@ func TestConnectionJoinTimeout(t *testing.T) {
 		TimeOut   = 0.1
 	)
 
-	client := NewConn(dummyCallback{}, ProtocolId, TimeOut)
-	require.True(t, client.Start(ClientPort), "couldn't start client connection")
+	client := NewConn(dummyCallback{}, protocolId, TimeOut)
+	require.True(t, client.Start(clientPort), "couldn't start client connection")
 	defer client.Stop()
 
-	cAddr, _ := net.ResolveUDPAddr("udp", fmt.Sprintf("127.0.0.1:%d", ServerPort))
+	cAddr, _ := net.ResolveUDPAddr("udp", fmt.Sprintf("127.0.0.1:%d", serverPort))
 	client.Connect(cAddr)
 
 	for {
@@ -126,15 +126,15 @@ func TestConnectionJoinBusy(t *testing.T) {
 
 	// connect client to server
 
-	client := NewConn(dummyCallback{}, ProtocolId, TimeOut)
-	require.True(t, client.Start(ClientPort), "couldn't start client connection")
+	client := NewConn(dummyCallback{}, protocolId, TimeOut)
+	require.True(t, client.Start(clientPort), "couldn't start client connection")
 	defer client.Stop()
 
-	server := NewConn(dummyCallback{}, ProtocolId, TimeOut)
-	require.True(t, server.Start(ServerPort), "couldn't start server connection")
+	server := NewConn(dummyCallback{}, protocolId, TimeOut)
+	require.True(t, server.Start(serverPort), "couldn't start server connection")
 	defer server.Stop()
 
-	cAddr, _ := net.ResolveUDPAddr("udp", fmt.Sprintf("127.0.0.1:%d", ServerPort))
+	cAddr, _ := net.ResolveUDPAddr("udp", fmt.Sprintf("127.0.0.1:%d", serverPort))
 	client.Connect(cAddr)
 	server.Listen()
 
@@ -174,11 +174,11 @@ func TestConnectionJoinBusy(t *testing.T) {
 	assert.True(t, server.IsConnected(), "server should be connected")
 
 	// attempt another connection, verify connect fails (busy)
-	busy := NewConn(dummyCallback{}, ProtocolId, TimeOut)
-	require.True(t, busy.Start(ClientPort+1), "couldn't start busy connection")
+	busy := NewConn(dummyCallback{}, protocolId, TimeOut)
+	require.True(t, busy.Start(clientPort+1), "couldn't start busy connection")
 	defer busy.Stop()
 
-	bAddr, _ := net.ResolveUDPAddr("udp", fmt.Sprintf("127.0.0.1:%d", ServerPort))
+	bAddr, _ := net.ResolveUDPAddr("udp", fmt.Sprintf("127.0.0.1:%d", serverPort))
 	busy.Connect(bAddr)
 
 	for {
@@ -233,15 +233,15 @@ func TestConnectionRejoin(t *testing.T) {
 
 	// connect client to server
 
-	client := NewConn(dummyCallback{}, ProtocolId, TimeOut)
-	require.True(t, client.Start(ClientPort), "couldn't start client connection")
+	client := NewConn(dummyCallback{}, protocolId, TimeOut)
+	require.True(t, client.Start(clientPort), "couldn't start client connection")
 	defer client.Stop()
 
-	server := NewConn(dummyCallback{}, ProtocolId, TimeOut)
-	require.True(t, server.Start(ServerPort), "couldn't start server connection")
+	server := NewConn(dummyCallback{}, protocolId, TimeOut)
+	require.True(t, server.Start(serverPort), "couldn't start server connection")
 	defer server.Stop()
 
-	cAddr, _ := net.ResolveUDPAddr("udp", fmt.Sprintf("127.0.0.1:%d", ServerPort))
+	cAddr, _ := net.ResolveUDPAddr("udp", fmt.Sprintf("127.0.0.1:%d", serverPort))
 	client.Connect(cAddr)
 	server.Listen()
 
@@ -352,15 +352,15 @@ func TestConnectionPayload(t *testing.T) {
 		TimeOut   = 0.1
 	)
 
-	client := NewConn(dummyCallback{}, ProtocolId, TimeOut)
-	require.True(t, client.Start(ClientPort), "couldn't start client connection")
+	client := NewConn(dummyCallback{}, protocolId, TimeOut)
+	require.True(t, client.Start(clientPort), "couldn't start client connection")
 	defer client.Stop()
 
-	server := NewConn(dummyCallback{}, ProtocolId, TimeOut)
-	require.True(t, server.Start(ServerPort), "couldn't start server connection")
+	server := NewConn(dummyCallback{}, protocolId, TimeOut)
+	require.True(t, server.Start(serverPort), "couldn't start server connection")
 	defer server.Stop()
 
-	cAddr, _ := net.ResolveUDPAddr("udp", fmt.Sprintf("127.0.0.1:%d", ServerPort))
+	cAddr, _ := net.ResolveUDPAddr("udp", fmt.Sprintf("127.0.0.1:%d", serverPort))
 	client.Connect(cAddr)
 	server.Listen()
 

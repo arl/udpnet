@@ -101,7 +101,8 @@ func processAck(ack, ack_bits uint,
 	}
 
 	//PacketQueue::iterator itor = pending_ack_queue.begin();
-	for i := 0; i < len(*pending_ack_queue); i++ {
+	i := 0
+	for i < len(*pending_ack_queue) {
 		var acked bool
 		itor := &(*pending_ack_queue)[i]
 
@@ -122,6 +123,8 @@ func processAck(ack, ack_bits uint,
 			*acked_packets++
 			//itor = pending_ack_queue.erase( itor );
 			*pending_ack_queue = append((*pending_ack_queue)[:i], (*pending_ack_queue)[i+1:]...)
+		} else {
+			i++
 		}
 	}
 }

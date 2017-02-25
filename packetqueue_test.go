@@ -11,13 +11,13 @@ func init() {
 	rand.Seed(270679)
 }
 
-func verifySorted(t *testing.T, pq *PacketQueue, maxSequence uint) {
-	prev := len(*pq)
+func verifySorted(t *testing.T, pq PacketQueue, maxSequence uint) {
+	prev := len(pq)
 
-	for iter := 0; iter != len(*pq); iter++ {
-		assert.True(t, (*pq)[iter].sequence <= maxSequence)
-		if prev != len(*pq) {
-			assert.True(t, sequenceMoreRecent((*pq)[iter].sequence, (*pq)[prev].sequence, maxSequence))
+	for iter := 0; iter != len(pq); iter++ {
+		assert.True(t, pq[iter].sequence <= maxSequence)
+		if prev != len(pq) {
+			assert.True(t, sequenceMoreRecent(pq[iter].sequence, pq[prev].sequence, maxSequence))
 			prev = iter
 		}
 	}
@@ -33,7 +33,7 @@ func TestPacketQueue(t *testing.T) {
 		var data PacketData
 		data.sequence = uint(i)
 		packetQueue.InsertSorted(data, MaximumSequence)
-		verifySorted(t, &packetQueue, MaximumSequence)
+		verifySorted(t, packetQueue, MaximumSequence)
 	}
 
 	t.Logf("check insert front\n")
@@ -42,7 +42,7 @@ func TestPacketQueue(t *testing.T) {
 		var data PacketData
 		data.sequence = uint(i)
 		packetQueue.InsertSorted(data, MaximumSequence)
-		verifySorted(t, &packetQueue, MaximumSequence)
+		verifySorted(t, packetQueue, MaximumSequence)
 	}
 
 	t.Logf("check insert random\n")
@@ -51,7 +51,7 @@ func TestPacketQueue(t *testing.T) {
 		var data PacketData
 		data.sequence = uint(rand.Int() & 0xFF)
 		packetQueue.InsertSorted(data, MaximumSequence)
-		verifySorted(t, &packetQueue, MaximumSequence)
+		verifySorted(t, packetQueue, MaximumSequence)
 	}
 
 	t.Logf("check insert wrap around\n")
@@ -60,12 +60,12 @@ func TestPacketQueue(t *testing.T) {
 		var data PacketData
 		data.sequence = uint(i)
 		packetQueue.InsertSorted(data, MaximumSequence)
-		verifySorted(t, &packetQueue, MaximumSequence)
+		verifySorted(t, packetQueue, MaximumSequence)
 	}
 	for i := 0; i <= 50; i++ {
 		var data PacketData
 		data.sequence = uint(i)
 		packetQueue.InsertSorted(data, MaximumSequence)
-		verifySorted(t, &packetQueue, MaximumSequence)
+		verifySorted(t, packetQueue, MaximumSequence)
 	}
 }

@@ -21,9 +21,6 @@ func (s *Socket) Open(port int) error {
 	// bind socket
 	var err error
 	s.conn, err = net.ListenUDP("udp", &addr)
-	if err != nil {
-		return err
-	}
 	return err
 }
 

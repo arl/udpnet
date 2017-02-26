@@ -1,7 +1,6 @@
 package udpnet
 
 import (
-	"fmt"
 	"testing"
 	"time"
 
@@ -18,7 +17,7 @@ func validateReliabilitySystem(t *testing.T, rs *ReliabilitySystem) {
 func TestReliabilitySystem(t *testing.T) {
 	const MaximumSequence = 255
 
-	fmt.Printf("check bit index for sequence\n")
+	t.Logf("check bit index for sequence\n")
 	assert.EqualValues(t, bitIndexForSequence(99, 100, MaximumSequence), 0)
 	assert.EqualValues(t, bitIndexForSequence(90, 100, MaximumSequence), 9)
 	assert.EqualValues(t, bitIndexForSequence(0, 1, MaximumSequence), 0)
@@ -27,7 +26,7 @@ func TestReliabilitySystem(t *testing.T) {
 	assert.EqualValues(t, bitIndexForSequence(254, 1, MaximumSequence), 2)
 	assert.EqualValues(t, bitIndexForSequence(254, 2, MaximumSequence), 3)
 
-	fmt.Printf("check generate ack bits\n")
+	t.Logf("check generate ack bits\n")
 	var packetQueue PacketQueue
 	for i := 0; i < 32; i++ {
 		var data PacketData
@@ -41,7 +40,7 @@ func TestReliabilitySystem(t *testing.T) {
 	assert.EqualValues(t, generateAckBits(16, &packetQueue, MaximumSequence), 0x0000FFFF)
 	assert.EqualValues(t, generateAckBits(48, &packetQueue, MaximumSequence), 0xFFFF0000)
 
-	fmt.Printf("check generate ack bits with wrap\n")
+	t.Logf("check generate ack bits with wrap\n")
 	packetQueue = PacketQueue{}
 	for i := 255 - 31; i <= 255; i++ {
 		var data PacketData
@@ -56,7 +55,7 @@ func TestReliabilitySystem(t *testing.T) {
 	assert.EqualValues(t, generateAckBits(240, &packetQueue, MaximumSequence), 0x0000FFFF)
 	assert.EqualValues(t, generateAckBits(16, &packetQueue, MaximumSequence), 0xFFFF0000)
 
-	fmt.Printf("check process ack (1)\n")
+	t.Logf("check process ack (1)\n")
 	{
 		var pendingAckQueue PacketQueue
 		for i := 0; i < 33; i++ {
@@ -86,7 +85,7 @@ func TestReliabilitySystem(t *testing.T) {
 		}
 	}
 
-	fmt.Printf("check process ack (2)\n")
+	t.Logf("check process ack (2)\n")
 	{
 		var pendingAckQueue PacketQueue
 		for i := 0; i < 33; i++ {
@@ -119,7 +118,7 @@ func TestReliabilitySystem(t *testing.T) {
 		}
 	}
 
-	fmt.Printf("check process ack (3)\n")
+	t.Logf("check process ack (3)\n")
 	{
 		var pendingAckQueue PacketQueue
 		for i := 0; i < 32; i++ {
@@ -153,7 +152,7 @@ func TestReliabilitySystem(t *testing.T) {
 
 	}
 
-	fmt.Printf("check process ack wrap around (1)\n")
+	t.Logf("check process ack wrap around (1)\n")
 	{
 		var pendingAckQueue PacketQueue
 		for i := 255 - 31; i <= 256; i++ {
@@ -185,7 +184,7 @@ func TestReliabilitySystem(t *testing.T) {
 		}
 	}
 
-	fmt.Printf("check process ack wrap around (2)\n")
+	t.Logf("check process ack wrap around (2)\n")
 	{
 		var pendingAckQueue PacketQueue
 		for i := 255 - 31; i <= 256; i++ {
@@ -220,7 +219,7 @@ func TestReliabilitySystem(t *testing.T) {
 		}
 	}
 
-	fmt.Printf("check process ack wrap around (3)\n")
+	t.Logf("check process ack wrap around (3)\n")
 	{
 		var pendingAckQueue PacketQueue
 		for i := 255 - 31; i <= 255; i++ {

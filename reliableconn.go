@@ -48,7 +48,6 @@ func (c *ReliableConn) clearData() {
 }
 
 func (c *ReliableConn) SendPacket(data []byte) bool {
-	fmt.Printf("in ReliableConn.SendPacket\n")
 	// TODO
 	//#ifdef NET_UNIT_TEST
 	if (c.reliabilitySystem.GetLocalSequence() & c.packet_loss_mask) != 0 {
@@ -72,7 +71,6 @@ func (c *ReliableConn) SendPacket(data []byte) bool {
 }
 
 func (c *ReliableConn) ReceivePacket(data []byte) int {
-	fmt.Printf("in ReliableConn.ReceivePacket\n")
 	const header = 12
 	if len(data) <= header {
 		return 0
@@ -94,8 +92,7 @@ func (c *ReliableConn) ReceivePacket(data []byte) int {
 }
 func (c *ReliableConn) Update(deltaTime time.Duration) {
 	c.Conn.Update(deltaTime)
-	// TODO: use time.Duration everywhere
-	c.reliabilitySystem.Update(float64(deltaTime))
+	c.reliabilitySystem.Update(deltaTime)
 }
 
 func (c *ReliableConn) HeaderSize() int {

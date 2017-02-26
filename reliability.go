@@ -1,6 +1,9 @@
 package udpnet
 
-import "fmt"
+import (
+	"fmt"
+	"time"
+)
 
 // reliability system to support reliable connection
 //  + manages sent, received, pending ack and acked packet queues
@@ -15,10 +18,10 @@ type ReliabilitySystem struct {
 	lostPackets  uint // total number of packets lost
 	ackedPackets uint // total number of packets acked
 
-	sentBandwidth  float64 // approximate sent bandwidth over the last second
-	ackedBandwidth float64 // approximate acked bandwidth over the last second
-	rtt            float64 // estimated round trip time
-	rttMax         float64 // maximum expected round trip time (hard coded to one second for the moment)
+	sentBandwidth  float64       // approximate sent bandwidth over the last second
+	ackedBandwidth float64       // approximate acked bandwidth over the last second
+	rtt            time.Duration // estimated round trip time
+	rttMax         time.Duration // maximum expected round trip time (hard coded to one second for the moment)
 
 	acks []uint // acked packets from last set of packet receives. cleared each update!
 
@@ -31,7 +34,7 @@ type ReliabilitySystem struct {
 //
 func NewReliabilitySystem(maxSequence uint) *ReliabilitySystem {
 	rs := &ReliabilitySystem{
-		rttMax:      1.0,
+		rttMax:      1 * time.Second,
 		maxSequence: maxSequence,
 	}
 	rs.Reset()
@@ -51,8 +54,8 @@ func (rs *ReliabilitySystem) Reset() {
 	rs.ackedPackets = 0
 	rs.sentBandwidth = 0.0
 	rs.ackedBandwidth = 0.0
-	rs.rtt = 0.0
-	rs.rttMax = 1.0
+	rs.rtt = 0 * time.Second
+	rs.rttMax = 1 * time.Second
 }
 
 func (rs *ReliabilitySystem) PacketSent(size int) {
@@ -73,7 +76,7 @@ func (rs *ReliabilitySystem) PacketSent(size int) {
 
 	var data PacketData
 	data.sequence = rs.localSequence
-	data.time = 0.0
+	data.time = 0
 	data.size = size
 	rs.sentQueue = append(rs.sentQueue, data)
 	rs.pendingAckQueue = append(rs.pendingAckQueue, data)
@@ -91,7 +94,7 @@ func (rs *ReliabilitySystem) PacketReceived(sequence uint, size int) {
 	}
 	var data PacketData
 	data.sequence = sequence
-	data.time = 0.0
+	data.time = 0
 	data.size = size
 	rs.receivedQueue = append(rs.receivedQueue, data)
 	if sequenceMoreRecent(sequence, rs.remoteSequence, rs.maxSequence) {
@@ -107,7 +110,7 @@ func (rs *ReliabilitySystem) ProcessAck(ack, ack_bits uint) {
 	processAck(ack, ack_bits, &rs.pendingAckQueue, &rs.ackedQueue, &rs.acks, &rs.ackedPackets, &rs.rtt, rs.maxSequence)
 }
 
-func (rs *ReliabilitySystem) Update(deltaTime float64) {
+func (rs *ReliabilitySystem) Update(deltaTime time.Duration) {
 	rs.acks = []uint{}
 	rs.advanceQueueTime(deltaTime)
 	rs.updateQueues()
@@ -156,7 +159,7 @@ func (rs *ReliabilitySystem) GetAckedBandwidth() float64 {
 	return rs.ackedBandwidth
 }
 
-func (rs *ReliabilitySystem) GetRoundTripTime() float64 {
+func (rs *ReliabilitySystem) GetRoundTripTime() time.Duration {
 	return rs.rtt
 }
 
@@ -164,7 +167,7 @@ func (rs *ReliabilitySystem) GetHeaderSize() int {
 	return 12
 }
 
-func (rs *ReliabilitySystem) advanceQueueTime(deltaTime float64) {
+func (rs *ReliabilitySystem) advanceQueueTime(deltaTime time.Duration) {
 	for i := 0; i < len(rs.sentQueue); i++ {
 		rs.sentQueue[i].time += deltaTime
 	}
@@ -180,7 +183,7 @@ func (rs *ReliabilitySystem) advanceQueueTime(deltaTime float64) {
 }
 
 func (rs *ReliabilitySystem) updateQueues() {
-	const epsilon = 0.001
+	const epsilon = 1 * time.Millisecond
 
 	for len(rs.sentQueue) > 0 && rs.sentQueue[0].time > rs.rttMax+epsilon {
 		// pop front

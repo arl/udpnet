@@ -1,13 +1,15 @@
 package udpnet
 
+import "time"
+
 // packet queue to store information about sent and received packets sorted in
 // sequence order + we define ordering using the "sequenceMoreRecent" function,
 // this works provided there is a large gap when sequence wrap occurs
 
 type PacketData struct {
-	sequence uint    // packet sequence number
-	time     float64 // time offset since packet was sent or received (depending on context)
-	size     int     // packet size in bytes
+	sequence uint          // packet sequence number
+	time     time.Duration // time offset since packet was sent or received (depending on context)
+	size     int           // packet size in bytes
 }
 
 // TODO: check if its better to have a slice of pointers to PacketData
@@ -95,12 +97,11 @@ func generateAckBits(ack uint, received_queue *PacketQueue, max_sequence uint) u
 func processAck(ack, ack_bits uint,
 	pending_ack_queue, acked_queue *PacketQueue,
 	acks *[]uint, acked_packets *uint,
-	rtt *float64, max_sequence uint) {
+	rtt *time.Duration, max_sequence uint) {
 	if len(*pending_ack_queue) == 0 {
 		return
 	}
 
-	//PacketQueue::iterator itor = pending_ack_queue.begin();
 	i := 0
 	for i < len(*pending_ack_queue) {
 		var acked bool
@@ -116,7 +117,7 @@ func processAck(ack, ack_bits uint,
 		}
 
 		if acked {
-			(*rtt) += (itor.time - *rtt) * 0.1
+			(*rtt) += (itor.time - *rtt) * 100 * time.Millisecond
 
 			acked_queue.InsertSorted(*itor, max_sequence)
 			*acks = append(*acks, itor.sequence)

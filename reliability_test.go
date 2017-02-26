@@ -3,6 +3,7 @@ package udpnet
 import (
 	"fmt"
 	"testing"
+	"time"
 
 	"github.com/stretchr/testify/assert"
 )
@@ -68,7 +69,7 @@ func TestReliabilitySystem(t *testing.T) {
 		var (
 			ackedQueue    PacketQueue
 			acks          []uint
-			rtt           float64 = 0.0
+			rtt           time.Duration
 			acked_packets uint
 		)
 		processAck(32, 0xFFFFFFFF, &pendingAckQueue, &ackedQueue, &acks, &acked_packets, &rtt, MaximumSequence)
@@ -98,7 +99,7 @@ func TestReliabilitySystem(t *testing.T) {
 		var (
 			ackedQueue    PacketQueue
 			acks          []uint
-			rtt           = 0.0
+			rtt           time.Duration
 			acked_packets uint
 		)
 		processAck(32, 0x0000FFFF, &pendingAckQueue, &ackedQueue, &acks, &acked_packets, &rtt, MaximumSequence)
@@ -131,7 +132,7 @@ func TestReliabilitySystem(t *testing.T) {
 		var (
 			ackedQueue    PacketQueue
 			acks          []uint
-			rtt           = 0.0
+			rtt           time.Duration
 			acked_packets uint
 		)
 		processAck(48, 0xFFFF0000, &pendingAckQueue, &ackedQueue, &acks, &acked_packets, &rtt, MaximumSequence)
@@ -158,7 +159,7 @@ func TestReliabilitySystem(t *testing.T) {
 		for i := 255 - 31; i <= 256; i++ {
 			var data PacketData
 			data.sequence = uint(i & 0xFF)
-			data.time = 0.0
+			data.time = 0
 			pendingAckQueue.InsertSorted(data, MaximumSequence)
 			verifySorted(t, pendingAckQueue, MaximumSequence)
 		}
@@ -167,7 +168,7 @@ func TestReliabilitySystem(t *testing.T) {
 		var (
 			ackedQueue    PacketQueue
 			acks          []uint
-			rtt           = 0.0
+			rtt           time.Duration
 			acked_packets uint
 		)
 		processAck(0, 0xFFFFFFFF, &pendingAckQueue, &ackedQueue, &acks, &acked_packets, &rtt, MaximumSequence)
@@ -190,7 +191,7 @@ func TestReliabilitySystem(t *testing.T) {
 		for i := 255 - 31; i <= 256; i++ {
 			var data PacketData
 			data.sequence = uint(i & 0xFF)
-			data.time = 0.0
+			data.time = 0
 			pendingAckQueue.InsertSorted(data, MaximumSequence)
 			verifySorted(t, pendingAckQueue, MaximumSequence)
 		}
@@ -199,7 +200,7 @@ func TestReliabilitySystem(t *testing.T) {
 		var (
 			ackedQueue    PacketQueue
 			acks          []uint
-			rtt           = 0.0
+			rtt           time.Duration
 			acked_packets uint
 		)
 		processAck(0, 0x0000FFFF, &pendingAckQueue, &ackedQueue, &acks, &acked_packets, &rtt, MaximumSequence)
@@ -225,7 +226,7 @@ func TestReliabilitySystem(t *testing.T) {
 		for i := 255 - 31; i <= 255; i++ {
 			var data PacketData
 			data.sequence = uint(i & 0xFF)
-			data.time = 0.0
+			data.time = 0
 			pendingAckQueue.InsertSorted(data, MaximumSequence)
 			verifySorted(t, pendingAckQueue, MaximumSequence)
 		}
@@ -234,7 +235,7 @@ func TestReliabilitySystem(t *testing.T) {
 		var (
 			ackedQueue    PacketQueue
 			acks          []uint
-			rtt           = 0.0
+			rtt           time.Duration
 			acked_packets uint
 		)
 		processAck(16, 0xFFFF0000, &pendingAckQueue, &ackedQueue, &acks, &acked_packets, &rtt, MaximumSequence)

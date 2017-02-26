@@ -1,6 +1,7 @@
 package udpnet
 
 import (
+	"bytes"
 	"fmt"
 	"net"
 	"testing"
@@ -216,8 +217,7 @@ func TestReliableConnectionJoinBusy(t *testing.T) {
 	assert.True(t, busy.ConnectFailed(), "busy.ConnectFailed() should return true")
 }
 
-/*
-func TestConnectionRejoin(t *testing.T) {
+func TestReliableConnectionRejoin(t *testing.T) {
 	const (
 		DeltaTime = time.Millisecond
 		TimeOut   = time.Duration(100) * time.Millisecond
@@ -225,11 +225,11 @@ func TestConnectionRejoin(t *testing.T) {
 
 	// connect client to server
 
-	client := NewConn(dummyCallback{}, protocolId, TimeOut)
+	client := NewReliableConn(protocolId, TimeOut, maxSequence)
 	require.True(t, client.Start(clientPort), "couldn't start client connection")
 	defer client.Stop()
 
-	server := NewConn(dummyCallback{}, protocolId, TimeOut)
+	server := NewReliableConn(protocolId, TimeOut, maxSequence)
 	require.True(t, server.Start(serverPort), "couldn't start server connection")
 	defer server.Stop()
 
@@ -266,7 +266,9 @@ func TestConnectionRejoin(t *testing.T) {
 		}
 
 		client.Update(DeltaTime)
+		validateReliabilitySystem(t, client.reliabilitySystem)
 		server.Update(DeltaTime)
+		validateReliabilitySystem(t, server.reliabilitySystem)
 	}
 
 	assert.True(t, client.IsConnected(), "client should be connected")
@@ -292,7 +294,9 @@ func TestConnectionRejoin(t *testing.T) {
 		}
 
 		client.Update(DeltaTime)
+		validateReliabilitySystem(t, client.reliabilitySystem)
 		server.Update(DeltaTime)
+		validateReliabilitySystem(t, server.reliabilitySystem)
 	}
 
 	assert.False(t, client.IsConnected(), "client should not be connected")
@@ -331,24 +335,26 @@ func TestConnectionRejoin(t *testing.T) {
 		}
 
 		client.Update(DeltaTime)
+		validateReliabilitySystem(t, client.reliabilitySystem)
 		server.Update(DeltaTime)
+		validateReliabilitySystem(t, server.reliabilitySystem)
 	}
 
 	assert.True(t, client.IsConnected(), "client should be connected")
 	assert.True(t, server.IsConnected(), "server should be connected")
 }
 
-func TestConnectionPayload(t *testing.T) {
+func TestReliableConnectionPayload(t *testing.T) {
 	const (
 		DeltaTime = time.Millisecond
 		TimeOut   = time.Duration(100) * time.Millisecond
 	)
 
-	client := NewConn(dummyCallback{}, protocolId, TimeOut)
+	client := NewReliableConn(protocolId, TimeOut, maxSequence)
 	require.True(t, client.Start(clientPort), "couldn't start client connection")
 	defer client.Stop()
 
-	server := NewConn(dummyCallback{}, protocolId, TimeOut)
+	server := NewReliableConn(protocolId, TimeOut, maxSequence)
 	require.True(t, server.Start(serverPort), "couldn't start server connection")
 	defer server.Stop()
 
@@ -387,10 +393,11 @@ func TestConnectionPayload(t *testing.T) {
 		}
 
 		client.Update(DeltaTime)
+		validateReliabilitySystem(t, client.reliabilitySystem)
 		server.Update(DeltaTime)
+		validateReliabilitySystem(t, server.reliabilitySystem)
 	}
 
 	assert.True(t, client.IsConnected(), "client should be connected")
 	assert.True(t, server.IsConnected(), "server should be connected")
 }
-*/

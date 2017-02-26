@@ -7,6 +7,13 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
+func validateReliabilitySystem(t *testing.T, rs *ReliabilitySystem) {
+	verifySorted(t, rs.sentQueue, rs.maxSequence)
+	verifySorted(t, rs.receivedQueue, rs.maxSequence)
+	verifySorted(t, rs.pendingAckQueue, rs.maxSequence)
+	verifySorted(t, rs.ackedQueue, rs.maxSequence)
+}
+
 func TestReliabilitySystem(t *testing.T) {
 	const MaximumSequence = 255
 

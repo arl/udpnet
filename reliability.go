@@ -112,21 +112,6 @@ func (rs *ReliabilitySystem) Update(deltaTime float64) {
 	rs.advanceQueueTime(deltaTime)
 	rs.updateQueues()
 	rs.updateStats()
-	// TODO: How to do this??? this should be called during unit testing
-	// we shoule call this each time Update is called
-
-	//#ifdef NET_UNIT_TEST
-	rs.Validate()
-	//#endif
-}
-
-// TODO: should be in unit test file
-func (rs *ReliabilitySystem) Validate() {
-	panic("take care of this")
-	//sentQueue.verify_sorted( max_sequence );
-	//receivedQueue.verify_sorted( max_sequence );
-	//pendingAckQueue.verify_sorted( max_sequence );
-	//ackedQueue.verify_sorted( max_sequence );
 }
 
 // data accessors
@@ -203,7 +188,7 @@ func (rs *ReliabilitySystem) updateQueues() {
 	}
 
 	if len(rs.receivedQueue) > 0 {
-		latest_sequence := rs.receivedQueue[len(rs.receivedQueue)].sequence
+		latest_sequence := rs.receivedQueue[len(rs.receivedQueue)-1].sequence
 
 		var minimum_sequence uint
 		if latest_sequence >= 34 {

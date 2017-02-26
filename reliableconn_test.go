@@ -104,8 +104,7 @@ func TestReliableConnectionJoinTimeout(t *testing.T) {
 	assert.True(t, client.ConnectFailed(), "client.ConnectFailed() should return true")
 }
 
-/*
-func TestConnectionJoinBusy(t *testing.T) {
+func TestReliableConnectionJoinBusy(t *testing.T) {
 	const (
 		DeltaTime = time.Millisecond
 		TimeOut   = time.Duration(100) * time.Millisecond
@@ -113,11 +112,11 @@ func TestConnectionJoinBusy(t *testing.T) {
 
 	// connect client to server
 
-	client := NewConn(dummyCallback{}, protocolId, TimeOut)
+	client := NewReliableConn(protocolId, TimeOut, maxSequence)
 	require.True(t, client.Start(clientPort), "couldn't start client connection")
 	defer client.Stop()
 
-	server := NewConn(dummyCallback{}, protocolId, TimeOut)
+	server := NewReliableConn(protocolId, TimeOut, maxSequence)
 	require.True(t, server.Start(serverPort), "couldn't start server connection")
 	defer server.Stop()
 
@@ -154,14 +153,16 @@ func TestConnectionJoinBusy(t *testing.T) {
 		}
 
 		client.Update(DeltaTime)
+		validateReliabilitySystem(t, client.reliabilitySystem)
 		server.Update(DeltaTime)
+		validateReliabilitySystem(t, server.reliabilitySystem)
 	}
 
 	assert.True(t, client.IsConnected(), "client should be connected")
 	assert.True(t, server.IsConnected(), "server should be connected")
 
 	// attempt another connection, verify connect fails (busy)
-	busy := NewConn(dummyCallback{}, protocolId, TimeOut)
+	busy := NewReliableConn(protocolId, TimeOut, maxSequence)
 	require.True(t, busy.Start(clientPort+1), "couldn't start busy connection")
 	defer busy.Stop()
 
@@ -202,8 +203,11 @@ func TestConnectionJoinBusy(t *testing.T) {
 		}
 
 		client.Update(DeltaTime)
+		validateReliabilitySystem(t, client.reliabilitySystem)
 		server.Update(DeltaTime)
+		validateReliabilitySystem(t, server.reliabilitySystem)
 		busy.Update(DeltaTime)
+		validateReliabilitySystem(t, busy.reliabilitySystem)
 	}
 
 	assert.True(t, client.IsConnected(), "client should be connected")
@@ -212,6 +216,7 @@ func TestConnectionJoinBusy(t *testing.T) {
 	assert.True(t, busy.ConnectFailed(), "busy.ConnectFailed() should return true")
 }
 
+/*
 func TestConnectionRejoin(t *testing.T) {
 	const (
 		DeltaTime = time.Millisecond

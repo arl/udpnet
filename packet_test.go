@@ -338,3 +338,103 @@ func TestPacketLoss(t *testing.T) {
 	assert.True(t, client.IsConnected(), "client should be connected")
 	assert.True(t, server.IsConnected(), "server should be connected")
 }
+
+func TestSequenceWrapAround(t *testing.T) {
+	const (
+		DeltaTime     = 50 * time.Millisecond
+		TimeOut       = 1 * time.Second
+		PacketCount   = 256
+		maxSequence31 = 31 // [0,31]
+	)
+
+	client := NewReliableConn(protocolId, TimeOut, maxSequence31)
+	require.True(t, client.Start(clientPort), "couldn't start client connection")
+	defer client.Stop()
+
+	server := NewReliableConn(protocolId, TimeOut, maxSequence31)
+	require.True(t, server.Start(serverPort), "couldn't start server connection")
+	defer server.Stop()
+
+	cAddr, _ := net.ResolveUDPAddr("udp", fmt.Sprintf("127.0.0.1:%d", serverPort))
+	client.Connect(cAddr)
+	server.Listen()
+
+	var (
+		clientAckCount  [maxSequence31 + 1]uint
+		serverAckCount  [maxSequence31 + 1]uint
+		allPacketsAcked bool
+	)
+
+	for {
+		if !client.IsConnecting() && client.ConnectFailed() {
+			break
+		}
+		if allPacketsAcked {
+			break
+		}
+
+		var ackPacket [256]byte
+		for i := range ackPacket {
+			ackPacket[i] = byte(i)
+		}
+
+		server.SendPacket(ackPacket[:])
+		client.SendPacket(ackPacket[:])
+
+		for {
+			var packet [256]byte
+			bytesRead := client.ReceivePacket(packet[:])
+			if bytesRead == 0 {
+				break
+			}
+			assert.EqualValues(t, bytesRead, 256)
+			for i := range packet {
+				assert.EqualValues(t, packet[i], i)
+			}
+		}
+
+		for {
+			var packet [256]byte
+			bytesRead := server.ReceivePacket(packet[:])
+			if bytesRead == 0 {
+				break
+			}
+			assert.EqualValues(t, bytesRead, 256)
+			for i := range packet {
+				assert.EqualValues(t, packet[i], i)
+			}
+		}
+
+		var acks []uint
+		acks = client.ReliabilitySystem().GetAcks()
+		for _, ack := range acks {
+			if ack < PacketCount {
+				assert.True(t, ack <= maxSequence31)
+				clientAckCount[ack] += 1
+			}
+		}
+
+		acks = server.ReliabilitySystem().GetAcks()
+		for _, ack := range acks {
+			if ack < PacketCount {
+				assert.True(t, ack <= maxSequence31)
+				serverAckCount[ack] += 1
+			}
+		}
+
+		var totalClientAcks, totalServerAcks uint
+		for i := 0; i < maxSequence31; i++ {
+			totalClientAcks += clientAckCount[i]
+			totalServerAcks += serverAckCount[i]
+		}
+		allPacketsAcked = totalClientAcks >= PacketCount && totalServerAcks >= PacketCount
+
+		client.Update(DeltaTime)
+		validateReliabilitySystem(t, client.reliabilitySystem)
+		server.Update(DeltaTime)
+		validateReliabilitySystem(t, server.reliabilitySystem)
+	}
+
+	assert.True(t, client.IsConnected(), "client should be connected")
+	assert.True(t, server.IsConnected(), "server should be connected")
+}

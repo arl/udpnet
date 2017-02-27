@@ -16,11 +16,18 @@ type ConnCallback interface {
 	OnDisconnect()
 }
 
+// ConnMode indicates the current mode of a connection, valid modes are None,
+// Client and Server
 type ConnMode int
 
 const (
+	// None is the mode of a connection not established yet.
 	None ConnMode = iota
+
+	// Client is the mode of a client connection.
 	Client
+
+	// Server is the mode of a server connection.
 	Server
 )
 
@@ -47,6 +54,7 @@ type Conn struct {
 	cb                 ConnCallback
 }
 
+// NewConn returns a new connection using given protocol id and timeout.
 func NewConn(cb ConnCallback, protocolId uint, timeout time.Duration) *Conn {
 	c := &Conn{
 		protocolId: protocolId,
@@ -59,6 +67,7 @@ func NewConn(cb ConnCallback, protocolId uint, timeout time.Duration) *Conn {
 	return c
 }
 
+// Start initiates the connection on given port
 func (c *Conn) Start(port int) bool {
 	fmt.Printf("start connection on port %d\n", port)
 	if err := c.socket.Open(port); err != nil {
@@ -69,6 +78,7 @@ func (c *Conn) Start(port int) bool {
 	return true
 }
 
+// Stop immediately stops the connection and closes the underlying socket.
 func (c *Conn) Stop() {
 	fmt.Printf("stop connection\n")
 	connected := c.IsConnected()
@@ -81,10 +91,12 @@ func (c *Conn) Stop() {
 	c.cb.OnStop()
 }
 
+// IsRunning indicates if the connection is currently running.
 func (c *Conn) IsRunning() bool {
 	return c.running
 }
 
+// Listen sets the connection mode as server and starts listening.
 func (c *Conn) Listen() {
 	fmt.Printf("server listening for connection\n")
 	connected := c.IsConnected()
@@ -96,6 +108,8 @@ func (c *Conn) Listen() {
 	c.state = listening
 }
 
+// Connect sets the connection mode as client and tries to connect to the server
+// at given address.
 func (c *Conn) Connect(address *net.UDPAddr) {
 	fmt.Printf("client connecting to %v\n", *address)
 	isConnected := c.IsConnected()
@@ -108,26 +122,32 @@ func (c *Conn) Connect(address *net.UDPAddr) {
 	c.address = address
 }
 
+// IsConnecting indicates if the connection is currently trying to connect.
 func (c *Conn) IsConnecting() bool {
 	return c.state == connecting
 }
 
+// IsConnecFailed indicates if the connection has failed.
 func (c *Conn) ConnectFailed() bool {
 	return c.state == connectFail
 }
 
+// IsConnected indicates if the connection has succeeded.
 func (c *Conn) IsConnected() bool {
 	return c.state == connected
 }
 
+// IsListening indicates if the connection is currently listening.
 func (c *Conn) IsListening() bool {
 	return c.state == listening
 }
 
+// GetMode returns the current connection mode.
 func (c *Conn) GetMode() ConnMode {
 	return c.mode
 }
 
+// Update updates the connection underlying state, reagarding elapsed time.
 func (c *Conn) Update(dt time.Duration) {
 	c.timeoutAccumulator += dt
 	if c.timeoutAccumulator > c.timeout {
@@ -147,6 +167,7 @@ func (c *Conn) Update(dt time.Duration) {
 	}
 }
 
+// SendPacket sends a slice of data on the connection.
 func (c *Conn) SendPacket(data []byte) error {
 	if c.address == nil {
 		return errors.New("address not set")
@@ -160,6 +181,7 @@ func (c *Conn) SendPacket(data []byte) error {
 	return c.socket.Send(c.address, packet)
 }
 
+// ReceivePacket received a slice of data from the connection.
 func (c *Conn) ReceivePacket(data []byte) int {
 	packet := make([]byte, len(data)+4)
 	var sender net.UDPAddr
@@ -197,6 +219,7 @@ func (c *Conn) ReceivePacket(data []byte) int {
 	return 0
 }
 
+// HeaderSize returns the size of the connection header.
 func (c *Conn) HeaderSize() int {
 	return 4
 }

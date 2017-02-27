@@ -77,7 +77,7 @@ func TestAcks(t *testing.T) {
 
 		var acks []uint
 
-		acks = client.ReliabilitySystem().GetAcks()
+		acks = client.ReliabilitySystem().Acks()
 		for _, ack := range acks {
 			if ack < PacketCount {
 				assert.False(t, clientAckedPackets[ack])
@@ -85,7 +85,7 @@ func TestAcks(t *testing.T) {
 			}
 		}
 
-		acks = server.ReliabilitySystem().GetAcks()
+		acks = server.ReliabilitySystem().Acks()
 		for _, ack := range acks {
 			if ack < PacketCount {
 				assert.False(t, serverAckedPackets[ack])
@@ -168,7 +168,7 @@ func TestAckBits(t *testing.T) {
 			}
 
 			var acks []uint
-			acks = client.ReliabilitySystem().GetAcks()
+			acks = client.ReliabilitySystem().Acks()
 			for _, ack := range acks {
 				if ack < PacketCount {
 					assert.False(t, clientAckedPackets[ack])
@@ -195,7 +195,7 @@ func TestAckBits(t *testing.T) {
 		}
 
 		var acks []uint
-		acks = server.ReliabilitySystem().GetAcks()
+		acks = server.ReliabilitySystem().Acks()
 		for _, ack := range acks {
 			if ack < PacketCount {
 				assert.False(t, serverAckedPackets[ack])
@@ -278,7 +278,7 @@ func TestPacketLoss(t *testing.T) {
 			}
 
 			var acks []uint
-			acks = client.ReliabilitySystem().GetAcks()
+			acks = client.ReliabilitySystem().Acks()
 			for _, ack := range acks {
 				if ack < PacketCount {
 					assert.False(t, clientAckedPackets[ack])
@@ -306,7 +306,7 @@ func TestPacketLoss(t *testing.T) {
 		}
 
 		var acks []uint
-		acks = server.ReliabilitySystem().GetAcks()
+		acks = server.ReliabilitySystem().Acks()
 		for _, ack := range acks {
 			if ack < PacketCount {
 				assert.False(t, serverAckedPackets[ack])
@@ -406,7 +406,7 @@ func TestSequenceWrapAround(t *testing.T) {
 		}
 
 		var acks []uint
-		acks = client.ReliabilitySystem().GetAcks()
+		acks = client.ReliabilitySystem().Acks()
 		for _, ack := range acks {
 			if ack < PacketCount {
 				assert.True(t, ack <= maxSequence31)
@@ -414,7 +414,7 @@ func TestSequenceWrapAround(t *testing.T) {
 			}
 		}
 
-		acks = server.ReliabilitySystem().GetAcks()
+		acks = server.ReliabilitySystem().Acks()
 		for _, ack := range acks {
 			if ack < PacketCount {
 				assert.True(t, ack <= maxSequence31)

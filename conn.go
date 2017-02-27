@@ -142,8 +142,8 @@ func (c *Conn) IsListening() bool {
 	return c.state == listening
 }
 
-// GetMode returns the current connection mode.
-func (c *Conn) GetMode() ConnMode {
+// Mode returns the current connection mode.
+func (c *Conn) Mode() ConnMode {
 	return c.mode
 }
 

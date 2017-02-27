@@ -50,15 +50,15 @@ func (c *ReliableConn) clearData() {
 func (c *ReliableConn) SendPacket(data []byte) bool {
 	// TODO
 	//#ifdef NET_UNIT_TEST
-	if (c.reliabilitySystem.GetLocalSequence() & c.packetLossMask) != 0 {
+	if (c.reliabilitySystem.LocalSequence() & c.packetLossMask) != 0 {
 		c.reliabilitySystem.PacketSent(len(data))
 		return true
 	}
 	//#endif
 	const header = 12
 	packet := make([]byte, header+len(data))
-	seq := c.reliabilitySystem.GetLocalSequence()
-	ack := c.reliabilitySystem.GetRemoteSequence()
+	seq := c.reliabilitySystem.LocalSequence()
+	ack := c.reliabilitySystem.RemoteSequence()
 	ackBits := c.reliabilitySystem.GenerateAckBits()
 	c.WriteHeader(packet, seq, ack, ackBits)
 	copy(packet[header:], data)
@@ -96,7 +96,7 @@ func (c *ReliableConn) Update(deltaTime time.Duration) {
 }
 
 func (c *ReliableConn) HeaderSize() int {
-	return c.Conn.HeaderSize() + c.reliabilitySystem.GetHeaderSize()
+	return c.Conn.HeaderSize() + c.reliabilitySystem.HeaderSize()
 }
 
 func (c *ReliableConn) ReliabilitySystem() *ReliabilitySystem {

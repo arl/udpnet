@@ -118,51 +118,51 @@ func (rs *ReliabilitySystem) Update(deltaTime time.Duration) {
 
 // data accessors
 
-func (rs *ReliabilitySystem) GetLocalSequence() uint {
+func (rs *ReliabilitySystem) LocalSequence() uint {
 	return rs.localSequence
 }
 
-func (rs *ReliabilitySystem) GetRemoteSequence() uint {
+func (rs *ReliabilitySystem) RemoteSequence() uint {
 	return rs.remoteSequence
 }
 
-func (rs *ReliabilitySystem) GetMaxSequence() uint {
+func (rs *ReliabilitySystem) MaxSequence() uint {
 	return rs.maxSequence
 }
 
-func (rs *ReliabilitySystem) GetAcks() []uint {
+func (rs *ReliabilitySystem) Acks() []uint {
 	return rs.acks
 }
 
-func (rs *ReliabilitySystem) GetSentPackets() uint {
+func (rs *ReliabilitySystem) SentPackets() uint {
 	return rs.sentPackets
 }
 
-func (rs *ReliabilitySystem) GetReceivedPackets() uint {
+func (rs *ReliabilitySystem) ReceivedPackets() uint {
 	return rs.recvPackets
 }
 
-func (rs *ReliabilitySystem) GetLostPackets() uint {
+func (rs *ReliabilitySystem) LostPackets() uint {
 	return rs.lostPackets
 }
 
-func (rs *ReliabilitySystem) GetAckedPackets() uint {
+func (rs *ReliabilitySystem) AckedPackets() uint {
 	return rs.ackedPackets
 }
 
-func (rs *ReliabilitySystem) GetSentBandwidth() float64 {
+func (rs *ReliabilitySystem) SentBandwidth() float64 {
 	return rs.sentBandwidth
 }
 
-func (rs *ReliabilitySystem) GetAckedBandwidth() float64 {
+func (rs *ReliabilitySystem) AckedBandwidth() float64 {
 	return rs.ackedBandwidth
 }
 
-func (rs *ReliabilitySystem) GetRoundTripTime() time.Duration {
+func (rs *ReliabilitySystem) RoundTripTime() time.Duration {
 	return rs.rtt
 }
 
-func (rs *ReliabilitySystem) GetHeaderSize() int {
+func (rs *ReliabilitySystem) HeaderSize() int {
 	return 12
 }
 

@@ -19,11 +19,11 @@ func TestReliableConnectionJoin(t *testing.T) {
 		TimeOut   = time.Duration(1000) * time.Millisecond
 	)
 
-	client := NewReliableConn(protocolId, TimeOut, maxSequence)
+	client := NewReliableConn(protocolID, TimeOut, maxSequence)
 	require.True(t, client.Start(clientPort), "couldn't start client connection")
 	defer client.Stop()
 
-	server := NewReliableConn(protocolId, TimeOut, maxSequence)
+	server := NewReliableConn(protocolID, TimeOut, maxSequence)
 	require.True(t, server.Start(serverPort), "couldn't start server connection")
 	defer server.Stop()
 
@@ -75,7 +75,7 @@ func TestReliableConnectionJoinTimeout(t *testing.T) {
 		TimeOut   = time.Duration(100) * time.Millisecond
 	)
 
-	client := NewReliableConn(protocolId, TimeOut, maxSequence)
+	client := NewReliableConn(protocolID, TimeOut, maxSequence)
 	require.True(t, client.Start(clientPort), "couldn't start client connection")
 	defer client.Stop()
 
@@ -113,11 +113,11 @@ func TestReliableConnectionJoinBusy(t *testing.T) {
 
 	// connect client to server
 
-	client := NewReliableConn(protocolId, TimeOut, maxSequence)
+	client := NewReliableConn(protocolID, TimeOut, maxSequence)
 	require.True(t, client.Start(clientPort), "couldn't start client connection")
 	defer client.Stop()
 
-	server := NewReliableConn(protocolId, TimeOut, maxSequence)
+	server := NewReliableConn(protocolID, TimeOut, maxSequence)
 	require.True(t, server.Start(serverPort), "couldn't start server connection")
 	defer server.Stop()
 
@@ -163,7 +163,7 @@ func TestReliableConnectionJoinBusy(t *testing.T) {
 	assert.True(t, server.IsConnected(), "server should be connected")
 
 	// attempt another connection, verify connect fails (busy)
-	busy := NewReliableConn(protocolId, TimeOut, maxSequence)
+	busy := NewReliableConn(protocolID, TimeOut, maxSequence)
 	require.True(t, busy.Start(clientPort+1), "couldn't start busy connection")
 	defer busy.Stop()
 
@@ -225,11 +225,11 @@ func TestReliableConnectionRejoin(t *testing.T) {
 
 	// connect client to server
 
-	client := NewReliableConn(protocolId, TimeOut, maxSequence)
+	client := NewReliableConn(protocolID, TimeOut, maxSequence)
 	require.True(t, client.Start(clientPort), "couldn't start client connection")
 	defer client.Stop()
 
-	server := NewReliableConn(protocolId, TimeOut, maxSequence)
+	server := NewReliableConn(protocolID, TimeOut, maxSequence)
 	require.True(t, server.Start(serverPort), "couldn't start server connection")
 	defer server.Stop()
 
@@ -350,11 +350,11 @@ func TestReliableConnectionPayload(t *testing.T) {
 		TimeOut   = time.Duration(100) * time.Millisecond
 	)
 
-	client := NewReliableConn(protocolId, TimeOut, maxSequence)
+	client := NewReliableConn(protocolID, TimeOut, maxSequence)
 	require.True(t, client.Start(clientPort), "couldn't start client connection")
 	defer client.Stop()
 
-	server := NewReliableConn(protocolId, TimeOut, maxSequence)
+	server := NewReliableConn(protocolID, TimeOut, maxSequence)
 	require.True(t, server.Start(serverPort), "couldn't start server connection")
 	defer server.Stop()
 

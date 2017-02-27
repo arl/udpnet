@@ -17,11 +17,11 @@ func TestAcks(t *testing.T) {
 		PacketCount = 100
 	)
 
-	client := NewReliableConn(protocolId, TimeOut, maxSequence)
+	client := NewReliableConn(protocolID, TimeOut, maxSequence)
 	require.True(t, client.Start(clientPort), "couldn't start client connection")
 	defer client.Stop()
 
-	server := NewReliableConn(protocolId, TimeOut, maxSequence)
+	server := NewReliableConn(protocolID, TimeOut, maxSequence)
 	require.True(t, server.Start(serverPort), "couldn't start server connection")
 	defer server.Stop()
 
@@ -121,11 +121,11 @@ func TestAckBits(t *testing.T) {
 		PacketCount = 100
 	)
 
-	client := NewReliableConn(protocolId, TimeOut, maxSequence)
+	client := NewReliableConn(protocolID, TimeOut, maxSequence)
 	require.True(t, client.Start(clientPort), "couldn't start client connection")
 	defer client.Stop()
 
-	server := NewReliableConn(protocolId, TimeOut, maxSequence)
+	server := NewReliableConn(protocolID, TimeOut, maxSequence)
 	require.True(t, server.Start(serverPort), "couldn't start server connection")
 	defer server.Stop()
 
@@ -229,12 +229,12 @@ func TestPacketLoss(t *testing.T) {
 		PacketCount = 100
 	)
 
-	client := NewReliableConn(protocolId, TimeOut, maxSequence)
+	client := NewReliableConn(protocolID, TimeOut, maxSequence)
 	client.SetPacketLossMask(1)
 	require.True(t, client.Start(clientPort), "couldn't start client connection")
 	defer client.Stop()
 
-	server := NewReliableConn(protocolId, TimeOut, maxSequence)
+	server := NewReliableConn(protocolID, TimeOut, maxSequence)
 	server.SetPacketLossMask(1)
 	require.True(t, server.Start(serverPort), "couldn't start server connection")
 	defer server.Stop()
@@ -347,11 +347,11 @@ func TestSequenceWrapAround(t *testing.T) {
 		maxSequence31 = 31 // [0,31]
 	)
 
-	client := NewReliableConn(protocolId, TimeOut, maxSequence31)
+	client := NewReliableConn(protocolID, TimeOut, maxSequence31)
 	require.True(t, client.Start(clientPort), "couldn't start client connection")
 	defer client.Stop()
 
-	server := NewReliableConn(protocolId, TimeOut, maxSequence31)
+	server := NewReliableConn(protocolID, TimeOut, maxSequence31)
 	require.True(t, server.Start(serverPort), "couldn't start server connection")
 	defer server.Stop()
 

@@ -26,10 +26,10 @@ func (cb *clearDataCB) OnConnect()    {}
 func (cb *clearDataCB) OnDisconnect() { cb.c.clearData() }
 
 // NewReliableConn returns a new reliable connection
-func NewReliableConn(protocolId uint, timeout time.Duration, maxSequence uint) *ReliableConn {
+func NewReliableConn(protocolID uint, timeout time.Duration, maxSequence uint) *ReliableConn {
 	c := &ReliableConn{
 		Conn: Conn{
-			protocolId: protocolId,
+			protocolID: protocolID,
 			timeout:    timeout,
 			mode:       None,
 			running:    false,

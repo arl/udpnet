@@ -21,7 +21,7 @@ func (dc dummyCallback) OnDisconnect() {}
 const (
 	serverPort = 30000
 	clientPort = 30001
-	protocolId = 0x11112222
+	protocolID = 0x11112222
 )
 
 var (
@@ -36,11 +36,11 @@ func TestConnectionJoin(t *testing.T) {
 		TimeOut   = time.Duration(1500) * time.Millisecond
 	)
 
-	client := NewConn(dummyCallback{}, protocolId, TimeOut)
+	client := NewConn(dummyCallback{}, protocolID, TimeOut)
 	require.True(t, client.Start(clientPort), "couldn't start client connection")
 	defer client.Stop()
 
-	server := NewConn(dummyCallback{}, protocolId, TimeOut)
+	server := NewConn(dummyCallback{}, protocolID, TimeOut)
 	require.True(t, server.Start(serverPort), "couldn't start server connection")
 	defer server.Stop()
 
@@ -90,7 +90,7 @@ func TestConnectionJoinTimeout(t *testing.T) {
 		TimeOut   = time.Duration(100) * time.Millisecond
 	)
 
-	client := NewConn(dummyCallback{}, protocolId, TimeOut)
+	client := NewConn(dummyCallback{}, protocolID, TimeOut)
 	require.True(t, client.Start(clientPort), "couldn't start client connection")
 	defer client.Stop()
 
@@ -127,11 +127,11 @@ func TestConnectionJoinBusy(t *testing.T) {
 
 	// connect client to server
 
-	client := NewConn(dummyCallback{}, protocolId, TimeOut)
+	client := NewConn(dummyCallback{}, protocolID, TimeOut)
 	require.True(t, client.Start(clientPort), "couldn't start client connection")
 	defer client.Stop()
 
-	server := NewConn(dummyCallback{}, protocolId, TimeOut)
+	server := NewConn(dummyCallback{}, protocolID, TimeOut)
 	require.True(t, server.Start(serverPort), "couldn't start server connection")
 	defer server.Stop()
 
@@ -175,7 +175,7 @@ func TestConnectionJoinBusy(t *testing.T) {
 	assert.True(t, server.IsConnected(), "server should be connected")
 
 	// attempt another connection, verify connect fails (busy)
-	busy := NewConn(dummyCallback{}, protocolId, TimeOut)
+	busy := NewConn(dummyCallback{}, protocolID, TimeOut)
 	require.True(t, busy.Start(clientPort+1), "couldn't start busy connection")
 	defer busy.Stop()
 
@@ -234,11 +234,11 @@ func TestConnectionRejoin(t *testing.T) {
 
 	// connect client to server
 
-	client := NewConn(dummyCallback{}, protocolId, TimeOut)
+	client := NewConn(dummyCallback{}, protocolID, TimeOut)
 	require.True(t, client.Start(clientPort), "couldn't start client connection")
 	defer client.Stop()
 
-	server := NewConn(dummyCallback{}, protocolId, TimeOut)
+	server := NewConn(dummyCallback{}, protocolID, TimeOut)
 	require.True(t, server.Start(serverPort), "couldn't start server connection")
 	defer server.Stop()
 
@@ -353,11 +353,11 @@ func TestConnectionPayload(t *testing.T) {
 		TimeOut   = time.Duration(100) * time.Millisecond
 	)
 
-	client := NewConn(dummyCallback{}, protocolId, TimeOut)
+	client := NewConn(dummyCallback{}, protocolID, TimeOut)
 	require.True(t, client.Start(clientPort), "couldn't start client connection")
 	defer client.Stop()
 
-	server := NewConn(dummyCallback{}, protocolId, TimeOut)
+	server := NewConn(dummyCallback{}, protocolID, TimeOut)
 	require.True(t, server.Start(serverPort), "couldn't start server connection")
 	defer server.Stop()
 

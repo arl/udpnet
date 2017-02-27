@@ -43,7 +43,7 @@ const (
 
 // Conn represents a Connection between two distant parties.
 type Conn struct {
-	protocolId         uint
+	protocolID         uint
 	timeout            time.Duration
 	running            bool
 	mode               ConnMode
@@ -55,9 +55,9 @@ type Conn struct {
 }
 
 // NewConn returns a new connection using given protocol id and timeout.
-func NewConn(cb ConnCallback, protocolId uint, timeout time.Duration) *Conn {
+func NewConn(cb ConnCallback, protocolID uint, timeout time.Duration) *Conn {
 	c := &Conn{
-		protocolId: protocolId,
+		protocolID: protocolID,
 		timeout:    timeout,
 		mode:       None,
 		running:    false,
@@ -173,10 +173,10 @@ func (c *Conn) SendPacket(data []byte) error {
 		return errors.New("address not set")
 	}
 	packet := make([]byte, len(data)+4)
-	packet[0] = byte(c.protocolId >> 24)
-	packet[1] = byte((c.protocolId >> 16) & 0xFF)
-	packet[2] = byte((c.protocolId >> 8) & 0xFF)
-	packet[3] = byte((c.protocolId) & 0xFF)
+	packet[0] = byte(c.protocolID >> 24)
+	packet[1] = byte((c.protocolID >> 16) & 0xFF)
+	packet[2] = byte((c.protocolID >> 8) & 0xFF)
+	packet[3] = byte((c.protocolID) & 0xFF)
 	copy(packet[4:], data)
 	return c.socket.Send(c.address, packet)
 }
@@ -192,10 +192,10 @@ func (c *Conn) ReceivePacket(data []byte) int {
 	if bytesRead <= 4 {
 		return 0
 	}
-	if packet[0] != byte(c.protocolId>>24) ||
-		packet[1] != byte((c.protocolId>>16)&0xFF) ||
-		packet[2] != byte((c.protocolId>>8)&0xFF) ||
-		packet[3] != byte(c.protocolId&0xFF) {
+	if packet[0] != byte(c.protocolID>>24) ||
+		packet[1] != byte((c.protocolID>>16)&0xFF) ||
+		packet[2] != byte((c.protocolID>>8)&0xFF) ||
+		packet[3] != byte(c.protocolID&0xFF) {
 		return 0
 	}
 	if c.mode == Server && !c.IsConnected() {

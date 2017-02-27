@@ -17,14 +17,14 @@ func (dc dummyCallback) OnDisconnect() { fmt.Println("disconnect") }
 const (
 	serverPort = 30000
 	clientPort = 30001
-	protocolId = 0x99887766
+	protocolID = 0x99887766
 	deltaTime  = time.Duration(250) * time.Millisecond
 	sendRate   = time.Duration(250) * time.Millisecond
 	timeout    = time.Duration(10) * time.Second
 )
 
 func main() {
-	connection := udpnet.NewConn(dummyCallback{}, protocolId, timeout)
+	connection := udpnet.NewConn(dummyCallback{}, protocolID, timeout)
 
 	if !connection.Start(serverPort) {
 		fmt.Printf("could not start connection on port %d\n", serverPort)

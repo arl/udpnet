@@ -45,7 +45,8 @@ func (s *Socket) Send(addr *net.UDPAddr, data []byte) error {
 	)
 
 	// set non-blocking io
-	deadline := time.Now().Add(100 * time.Millisecond)
+	// TODO: DECREASE THIS!!!
+	deadline := time.Now().Add(1 * time.Millisecond)
 	err = s.conn.SetDeadline(deadline)
 	if err != nil {
 		s.Close()
@@ -76,7 +77,8 @@ func (s *Socket) Receive(addr *net.UDPAddr, data []byte) int {
 	)
 
 	// set non-blocking io
-	deadline := time.Now().Add(100 * time.Millisecond)
+	// TODO: DECREASE THIS!!!
+	deadline := time.Now().Add(1 * time.Millisecond)
 	err = s.conn.SetDeadline(deadline)
 	if err != nil {
 		s.Close()

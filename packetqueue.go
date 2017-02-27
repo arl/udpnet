@@ -117,7 +117,7 @@ func processAck(ack, ack_bits uint,
 		}
 
 		if acked {
-			(*rtt) += (itor.time - *rtt) * 100 * time.Millisecond
+			(*rtt) += (itor.time - *rtt) / 10
 
 			acked_queue.InsertSorted(*itor, max_sequence)
 			*acks = append(*acks, itor.sequence)

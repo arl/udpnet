@@ -127,7 +127,7 @@ func (c *Conn) IsConnecting() bool {
 	return c.state == connecting
 }
 
-// IsConnecFailed indicates if the connection has failed.
+// ConnectFailed indicates if the connection has failed.
 func (c *Conn) ConnectFailed() bool {
 	return c.state == connectFail
 }

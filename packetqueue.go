@@ -51,79 +51,78 @@ func sequenceMoreRecent(s1, s2, maxSequence uint) bool {
 	return (s1 > s2) && (s1-s2 <= maxSequence/2) || (s2 > s1) && (s2-s1 > maxSequence/2)
 }
 
-func bitIndexForSequence(sequence, ack, max_sequence uint) uint {
+func bitIndexForSequence(sequence, ack, maxSequence uint) uint {
 	// TODO: remove those asserts once done
 	if sequence == ack {
 		panic("assert(sequence != ack)")
 	}
-	if sequenceMoreRecent(sequence, ack, max_sequence) {
-		panic("assert(!sequence_more_recent(sequence, ack, max_sequence))")
+	if sequenceMoreRecent(sequence, ack, maxSequence) {
+		panic("assert(!sequence_more_recent(sequence, ack, maxSequence))")
 	}
 	if sequence > ack {
 		if ack >= 33 {
 			panic("assert(ack < 33)")
 		}
-		if max_sequence < sequence {
-			panic("assert(max_sequence >= sequence)")
+		if maxSequence < sequence {
+			panic("assert(maxSequence >= sequence)")
 		}
-		return ack + (max_sequence - sequence)
-	} else {
-		if ack < 1 {
-			panic("assert(ack >= 1)")
-		}
-		if sequence > ack-1 {
-			panic("passert(sequence <= ack-1)")
-		}
-		return ack - 1 - sequence
+		return ack + (maxSequence - sequence)
 	}
+	if ack < 1 {
+		panic("assert(ack >= 1)")
+	}
+	if sequence > ack-1 {
+		panic("passert(sequence <= ack-1)")
+	}
+	return ack - 1 - sequence
 }
 
-func generateAckBits(ack uint, received_queue *PacketQueue, max_sequence uint) uint {
-	var ack_bits uint
-	for itor := 0; itor < len(*received_queue); itor++ {
-		iseq := (*received_queue)[itor].sequence
+func generateAckBits(ack uint, receivedQueue *PacketQueue, maxSequence uint) uint {
+	var ackBits uint
+	for itor := 0; itor < len(*receivedQueue); itor++ {
+		iseq := (*receivedQueue)[itor].sequence
 
-		if iseq == ack || sequenceMoreRecent(iseq, ack, max_sequence) {
+		if iseq == ack || sequenceMoreRecent(iseq, ack, maxSequence) {
 			break
 		}
-		bit_index := bitIndexForSequence(iseq, ack, max_sequence)
-		if bit_index <= 31 {
-			ack_bits |= 1 << bit_index
+		bitIndex := bitIndexForSequence(iseq, ack, maxSequence)
+		if bitIndex <= 31 {
+			ackBits |= 1 << bitIndex
 		}
 	}
-	return ack_bits
+	return ackBits
 }
 
-func processAck(ack, ack_bits uint,
-	pending_ack_queue, acked_queue *PacketQueue,
-	acks *[]uint, acked_packets *uint,
-	rtt *time.Duration, max_sequence uint) {
-	if len(*pending_ack_queue) == 0 {
+func processAck(ack, ackBits uint,
+	pendingAckQueue, ackedQueue *PacketQueue,
+	acks *[]uint, ackedPackets *uint,
+	rtt *time.Duration, maxSequence uint) {
+	if len(*pendingAckQueue) == 0 {
 		return
 	}
 
 	i := 0
-	for i < len(*pending_ack_queue) {
+	for i < len(*pendingAckQueue) {
 		var acked bool
-		itor := &(*pending_ack_queue)[i]
+		itor := &(*pendingAckQueue)[i]
 
 		if itor.sequence == ack {
 			acked = true
-		} else if !sequenceMoreRecent(itor.sequence, ack, max_sequence) {
-			bit_index := bitIndexForSequence(itor.sequence, ack, max_sequence)
-			if bit_index <= 31 {
-				acked = ((ack_bits >> bit_index) & 1) != 0
+		} else if !sequenceMoreRecent(itor.sequence, ack, maxSequence) {
+			bitIndex := bitIndexForSequence(itor.sequence, ack, maxSequence)
+			if bitIndex <= 31 {
+				acked = ((ackBits >> bitIndex) & 1) != 0
 			}
 		}
 
 		if acked {
 			(*rtt) += (itor.time - *rtt) / 10
 
-			acked_queue.InsertSorted(*itor, max_sequence)
+			ackedQueue.InsertSorted(*itor, maxSequence)
 			*acks = append(*acks, itor.sequence)
-			*acked_packets++
+			*ackedPackets++
 			//itor = pending_ack_queue.erase( itor );
-			*pending_ack_queue = append((*pending_ack_queue)[:i], (*pending_ack_queue)[i+1:]...)
+			*pendingAckQueue = append((*pendingAckQueue)[:i], (*pendingAckQueue)[i+1:]...)
 		} else {
 			i++
 		}

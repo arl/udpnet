@@ -410,7 +410,7 @@ func TestSequenceWrapAround(t *testing.T) {
 		for _, ack := range acks {
 			if ack < PacketCount {
 				assert.True(t, ack <= maxSequence31)
-				clientAckCount[ack] += 1
+				clientAckCount[ack]++
 			}
 		}
 
@@ -418,7 +418,7 @@ func TestSequenceWrapAround(t *testing.T) {
 		for _, ack := range acks {
 			if ack < PacketCount {
 				assert.True(t, ack <= maxSequence31)
-				serverAckCount[ack] += 1
+				serverAckCount[ack]++
 			}
 		}
 

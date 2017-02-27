@@ -66,14 +66,14 @@ func TestReliabilitySystem(t *testing.T) {
 			verifySorted(t, pendingAckQueue, MaximumSequence)
 		}
 		var (
-			ackedQueue    PacketQueue
-			acks          []uint
-			rtt           time.Duration
-			acked_packets uint
+			ackedQueue   PacketQueue
+			acks         []uint
+			rtt          time.Duration
+			ackedPackets uint
 		)
-		processAck(32, 0xFFFFFFFF, &pendingAckQueue, &ackedQueue, &acks, &acked_packets, &rtt, MaximumSequence)
+		processAck(32, 0xFFFFFFFF, &pendingAckQueue, &ackedQueue, &acks, &ackedPackets, &rtt, MaximumSequence)
 		assert.Len(t, acks, 33)
-		assert.EqualValues(t, acked_packets, 33)
+		assert.EqualValues(t, ackedPackets, 33)
 		assert.Len(t, ackedQueue, 33)
 		assert.Len(t, pendingAckQueue, 0)
 		verifySorted(t, ackedQueue, MaximumSequence)
@@ -96,14 +96,14 @@ func TestReliabilitySystem(t *testing.T) {
 			verifySorted(t, pendingAckQueue, MaximumSequence)
 		}
 		var (
-			ackedQueue    PacketQueue
-			acks          []uint
-			rtt           time.Duration
-			acked_packets uint
+			ackedQueue   PacketQueue
+			acks         []uint
+			rtt          time.Duration
+			ackedPackets uint
 		)
-		processAck(32, 0x0000FFFF, &pendingAckQueue, &ackedQueue, &acks, &acked_packets, &rtt, MaximumSequence)
+		processAck(32, 0x0000FFFF, &pendingAckQueue, &ackedQueue, &acks, &ackedPackets, &rtt, MaximumSequence)
 		assert.Len(t, acks, 17)
-		assert.EqualValues(t, acked_packets, 17)
+		assert.EqualValues(t, ackedPackets, 17)
 		assert.Len(t, ackedQueue, 17)
 		assert.Len(t, pendingAckQueue, 33-17)
 		verifySorted(t, ackedQueue, MaximumSequence)
@@ -129,14 +129,14 @@ func TestReliabilitySystem(t *testing.T) {
 			verifySorted(t, pendingAckQueue, MaximumSequence)
 		}
 		var (
-			ackedQueue    PacketQueue
-			acks          []uint
-			rtt           time.Duration
-			acked_packets uint
+			ackedQueue   PacketQueue
+			acks         []uint
+			rtt          time.Duration
+			ackedPackets uint
 		)
-		processAck(48, 0xFFFF0000, &pendingAckQueue, &ackedQueue, &acks, &acked_packets, &rtt, MaximumSequence)
+		processAck(48, 0xFFFF0000, &pendingAckQueue, &ackedQueue, &acks, &ackedPackets, &rtt, MaximumSequence)
 		assert.Len(t, acks, 16)
-		assert.EqualValues(t, acked_packets, 16)
+		assert.EqualValues(t, ackedPackets, 16)
 		assert.Len(t, ackedQueue, 16)
 		assert.Len(t, pendingAckQueue, 16)
 		verifySorted(t, ackedQueue, MaximumSequence)
@@ -165,14 +165,14 @@ func TestReliabilitySystem(t *testing.T) {
 		assert.Len(t, pendingAckQueue, 33)
 
 		var (
-			ackedQueue    PacketQueue
-			acks          []uint
-			rtt           time.Duration
-			acked_packets uint
+			ackedQueue   PacketQueue
+			acks         []uint
+			rtt          time.Duration
+			ackedPackets uint
 		)
-		processAck(0, 0xFFFFFFFF, &pendingAckQueue, &ackedQueue, &acks, &acked_packets, &rtt, MaximumSequence)
+		processAck(0, 0xFFFFFFFF, &pendingAckQueue, &ackedQueue, &acks, &ackedPackets, &rtt, MaximumSequence)
 		assert.Len(t, acks, 33)
-		assert.EqualValues(t, acked_packets, 33)
+		assert.EqualValues(t, ackedPackets, 33)
 		assert.Len(t, ackedQueue, 33)
 		assert.Len(t, pendingAckQueue, 0)
 		verifySorted(t, ackedQueue, MaximumSequence)
@@ -197,14 +197,14 @@ func TestReliabilitySystem(t *testing.T) {
 		assert.Len(t, pendingAckQueue, 33)
 
 		var (
-			ackedQueue    PacketQueue
-			acks          []uint
-			rtt           time.Duration
-			acked_packets uint
+			ackedQueue   PacketQueue
+			acks         []uint
+			rtt          time.Duration
+			ackedPackets uint
 		)
-		processAck(0, 0x0000FFFF, &pendingAckQueue, &ackedQueue, &acks, &acked_packets, &rtt, MaximumSequence)
+		processAck(0, 0x0000FFFF, &pendingAckQueue, &ackedQueue, &acks, &ackedPackets, &rtt, MaximumSequence)
 		assert.Len(t, acks, 17)
-		assert.EqualValues(t, acked_packets, 17)
+		assert.EqualValues(t, ackedPackets, 17)
 		assert.Len(t, ackedQueue, 17)
 		assert.Len(t, pendingAckQueue, 33-17)
 		verifySorted(t, ackedQueue, MaximumSequence)
@@ -232,14 +232,14 @@ func TestReliabilitySystem(t *testing.T) {
 		assert.Len(t, pendingAckQueue, 32)
 
 		var (
-			ackedQueue    PacketQueue
-			acks          []uint
-			rtt           time.Duration
-			acked_packets uint
+			ackedQueue   PacketQueue
+			acks         []uint
+			rtt          time.Duration
+			ackedPackets uint
 		)
-		processAck(16, 0xFFFF0000, &pendingAckQueue, &ackedQueue, &acks, &acked_packets, &rtt, MaximumSequence)
+		processAck(16, 0xFFFF0000, &pendingAckQueue, &ackedQueue, &acks, &ackedPackets, &rtt, MaximumSequence)
 		assert.Len(t, acks, 16)
-		assert.EqualValues(t, acked_packets, 16)
+		assert.EqualValues(t, ackedPackets, 16)
 		assert.Len(t, ackedQueue, 16)
 		assert.Len(t, pendingAckQueue, 16)
 		verifySorted(t, ackedQueue, MaximumSequence)

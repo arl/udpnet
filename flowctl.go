@@ -90,7 +90,6 @@ func (fc *FlowControl) Update(dt, rtt time.Duration) {
 func (fc *FlowControl) SendRate() int {
 	if fc.mode == Good {
 		return 30
-	} else {
-		return 10
 	}
+	return 10
 }

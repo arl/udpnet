@@ -15,7 +15,7 @@ type ReliableConn struct {
 	reliabilitySystem *ReliabilitySystem
 
 	// TODO: this is for unit test only
-	packet_loss_mask uint // mask sequence number, if non-zero, drop packet
+	packetLossMask uint // mask sequence number, if non-zero, drop packet
 }
 
 type clearDataCB struct{ c *ReliableConn }
@@ -50,7 +50,7 @@ func (c *ReliableConn) clearData() {
 func (c *ReliableConn) SendPacket(data []byte) bool {
 	// TODO
 	//#ifdef NET_UNIT_TEST
-	if (c.reliabilitySystem.GetLocalSequence() & c.packet_loss_mask) != 0 {
+	if (c.reliabilitySystem.GetLocalSequence() & c.packetLossMask) != 0 {
 		c.reliabilitySystem.PacketSent(len(data))
 		return true
 	}
@@ -59,8 +59,8 @@ func (c *ReliableConn) SendPacket(data []byte) bool {
 	packet := make([]byte, header+len(data))
 	seq := c.reliabilitySystem.GetLocalSequence()
 	ack := c.reliabilitySystem.GetRemoteSequence()
-	ack_bits := c.reliabilitySystem.GenerateAckBits()
-	c.WriteHeader(packet, seq, ack, ack_bits)
+	ackBits := c.reliabilitySystem.GenerateAckBits()
+	c.WriteHeader(packet, seq, ack, ackBits)
 	copy(packet[header:], data)
 	if err := c.Conn.SendPacket(packet); err != nil {
 		fmt.Printf("couldn't send packet, %v\n", err)
@@ -76,19 +76,19 @@ func (c *ReliableConn) ReceivePacket(data []byte) int {
 		return 0
 	}
 	packet := make([]byte, header+len(data))
-	received_bytes := c.Conn.ReceivePacket(packet)
-	if received_bytes == 0 {
+	receivedBytes := c.Conn.ReceivePacket(packet)
+	if receivedBytes == 0 {
 		return 0
 	}
-	if received_bytes <= header {
+	if receivedBytes <= header {
 		return 0
 	}
-	var packet_sequence, packet_ack, packet_ack_bits uint
-	packet_sequence, packet_ack, packet_ack_bits = c.ReadHeader(packet)
-	c.reliabilitySystem.PacketReceived(packet_sequence, received_bytes-header)
-	c.reliabilitySystem.ProcessAck(packet_ack, packet_ack_bits)
-	copy(data, packet[header:received_bytes])
-	return received_bytes - header
+	var packetSequence, packetAck, packetAckBits uint
+	packetSequence, packetAck, packetAckBits = c.ReadHeader(packet)
+	c.reliabilitySystem.PacketReceived(packetSequence, receivedBytes-header)
+	c.reliabilitySystem.ProcessAck(packetAck, packetAckBits)
+	copy(data, packet[header:receivedBytes])
+	return receivedBytes - header
 }
 func (c *ReliableConn) Update(deltaTime time.Duration) {
 	c.Conn.Update(deltaTime)
@@ -108,7 +108,7 @@ func (c *ReliableConn) ReliabilitySystem() *ReliabilitySystem {
 // TODO: this should only be enabled during unit tests
 //#ifdef NET_UNIT_TEST
 func (c *ReliableConn) SetPacketLossMask(mask uint) {
-	c.packet_loss_mask = mask
+	c.packetLossMask = mask
 }
 
 //#endif
@@ -120,10 +120,10 @@ func (c *ReliableConn) WriteInteger(data []byte, i uint) {
 	data[3] = byte(i & 0xFF)
 }
 
-func (c *ReliableConn) WriteHeader(header []byte, sequence, ack, ack_bits uint) {
+func (c *ReliableConn) WriteHeader(header []byte, sequence, ack, ackBits uint) {
 	c.WriteInteger(header, sequence)
 	c.WriteInteger(header[4:], ack)
-	c.WriteInteger(header[8:], ack_bits)
+	c.WriteInteger(header[8:], ackBits)
 }
 
 func (c *ReliableConn) ReadInteger(data []byte) uint {

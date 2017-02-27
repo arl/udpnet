@@ -25,10 +25,10 @@ type ReliabilitySystem struct {
 
 	acks []uint // acked packets from last set of packet receives. cleared each update!
 
-	sentQueue       PacketQueue // sent packets used to calculate sent bandwidth (kept until rtt_maximum)
-	pendingAckQueue PacketQueue // sent packets which have not been acked yet (kept until rtt_maximum * 2 )
+	sentQueue       PacketQueue // sent packets used to calculate sent bandwidth (kept until rttMax)
+	pendingAckQueue PacketQueue // sent packets which have not been acked yet (kept until rttMax * 2 )
 	receivedQueue   PacketQueue // received packets for determining acks to send (kept up to most recent recv sequence - 32)
-	ackedQueue      PacketQueue // acked packets (kept until rtt_maximum * 2)
+	ackedQueue      PacketQueue // acked packets (kept until rttMax * 2)
 }
 
 //
@@ -67,11 +67,10 @@ func (rs *ReliabilitySystem) PacketSent(size int) {
 	}
 	// TODO: remove after debugging/testing
 	if rs.sentQueue.Exists(rs.localSequence) {
-		panic("assert( !sentQueue.exists( local_sequence ) )")
+		panic("assert( !sentQueue.exists( localSequence ) )")
 	}
 	if rs.pendingAckQueue.Exists(rs.localSequence) {
-
-		panic("assert( !pendingAckQueue.exists( local_sequence ) )")
+		panic("assert( !pendingAckQueue.exists( localSequence ) )")
 	}
 
 	var data PacketData
@@ -106,8 +105,8 @@ func (rs *ReliabilitySystem) GenerateAckBits() uint {
 	return generateAckBits(rs.remoteSequence, &rs.receivedQueue, rs.maxSequence)
 }
 
-func (rs *ReliabilitySystem) ProcessAck(ack, ack_bits uint) {
-	processAck(ack, ack_bits, &rs.pendingAckQueue, &rs.ackedQueue, &rs.acks, &rs.ackedPackets, &rs.rtt, rs.maxSequence)
+func (rs *ReliabilitySystem) ProcessAck(ack, ackBits uint) {
+	processAck(ack, ackBits, &rs.pendingAckQueue, &rs.ackedQueue, &rs.acks, &rs.ackedPackets, &rs.rtt, rs.maxSequence)
 }
 
 func (rs *ReliabilitySystem) Update(deltaTime time.Duration) {
@@ -191,16 +190,16 @@ func (rs *ReliabilitySystem) updateQueues() {
 	}
 
 	if len(rs.receivedQueue) > 0 {
-		latest_sequence := rs.receivedQueue[len(rs.receivedQueue)-1].sequence
+		latestSequence := rs.receivedQueue[len(rs.receivedQueue)-1].sequence
 
-		var minimum_sequence uint
-		if latest_sequence >= 34 {
-			minimum_sequence = (latest_sequence - 34)
+		var minSequence uint
+		if latestSequence >= 34 {
+			minSequence = (latestSequence - 34)
 		} else {
-			minimum_sequence = rs.maxSequence - (34 - latest_sequence)
+			minSequence = rs.maxSequence - (34 - latestSequence)
 		}
 
-		for len(rs.receivedQueue) > 0 && !sequenceMoreRecent(rs.receivedQueue[0].sequence, minimum_sequence, rs.maxSequence) {
+		for len(rs.receivedQueue) > 0 && !sequenceMoreRecent(rs.receivedQueue[0].sequence, minSequence, rs.maxSequence) {
 			// pop front
 			rs.receivedQueue = rs.receivedQueue[1:]
 		}
@@ -219,22 +218,22 @@ func (rs *ReliabilitySystem) updateQueues() {
 }
 
 func (rs *ReliabilitySystem) updateStats() {
-	var sent_bytes_per_second float64
+	var sentBytesPerSecond float64
 	for i := 0; i < len(rs.sentQueue); i++ {
-		sent_bytes_per_second += float64(rs.sentQueue[i].size)
+		sentBytesPerSecond += float64(rs.sentQueue[i].size)
 	}
 	var (
-		acked_packets_per_second float64
-		acked_bytes_per_second   float64
+		ackedPacketsPerSecond float64
+		ackedBytesPerSecond   float64
 	)
 	for i := 0; i < len(rs.ackedQueue); i++ {
 		if rs.ackedQueue[i].time >= rs.rttMax {
-			acked_packets_per_second++
-			acked_bytes_per_second += float64(rs.ackedQueue[i].size)
+			ackedPacketsPerSecond++
+			ackedBytesPerSecond += float64(rs.ackedQueue[i].size)
 		}
 	}
-	sent_bytes_per_second /= float64(rs.rttMax)
-	acked_bytes_per_second /= float64(rs.rttMax)
-	rs.sentBandwidth = sent_bytes_per_second * (8.0 / 1000.0)
-	rs.ackedBandwidth = acked_bytes_per_second * (8.0 / 1000.0)
+	sentBytesPerSecond /= float64(rs.rttMax)
+	ackedBytesPerSecond /= float64(rs.rttMax)
+	rs.sentBandwidth = sentBytesPerSecond * (8.0 / 1000.0)
+	rs.ackedBandwidth = ackedBytesPerSecond * (8.0 / 1000.0)
 }

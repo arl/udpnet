@@ -3,29 +3,35 @@ package main
 import (
 	"fmt"
 	"net"
+	"os"
+	"strconv"
 	"time"
 
 	"github.com/aurelien-rainone/udpnet"
 )
 
-type dummyCallback struct{}
-
-func (dc dummyCallback) OnStart()      { fmt.Println("start") }
-func (dc dummyCallback) OnStop()       { fmt.Println("stop") }
-func (dc dummyCallback) OnConnect()    { fmt.Println("connect") }
-func (dc dummyCallback) OnDisconnect() { fmt.Println("disconnect") }
-
 const (
-	serverPort = 30000
-	clientPort = 30001
-	protocolID = 0x99887766
-	deltaTime  = time.Duration(250) * time.Millisecond
-	sendRate   = time.Duration(250) * time.Millisecond
-	timeout    = time.Duration(10) * time.Second
+	serverPort  = 30000
+	protocolID  = 0x99887766
+	deltaTime   = time.Duration(250) * time.Millisecond
+	sendRate    = time.Duration(250) * time.Millisecond
+	timeout     = time.Duration(10) * time.Second
+	MaxSequence = 0xFFFFFFFF
 )
 
 func main() {
-	connection := udpnet.NewConn(dummyCallback{}, protocolID, timeout)
+
+	var clientPort = 30001
+	if len(os.Args) > 1 {
+		if val, err := strconv.Atoi(os.Args[1]); err != nil {
+			fmt.Println("invalid port number", os.Args[1], ", ", err)
+			os.Exit(1)
+		} else {
+			clientPort = val
+		}
+	}
+	fmt.Println("client port is", clientPort)
+	connection := udpnet.NewReliableConn(protocolID, timeout, MaxSequence)
 
 	if !connection.Start(clientPort) {
 		fmt.Printf("could not start connection on port %d\n", clientPort)

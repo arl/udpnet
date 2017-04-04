@@ -57,7 +57,7 @@ func bitIndexForSequence(sequence, ack, maxSequence uint) uint {
 		panic("assert(sequence != ack)")
 	}
 	if sequenceMoreRecent(sequence, ack, maxSequence) {
-		panic("assert(!sequence_more_recent(sequence, ack, maxSequence))")
+		panic("assert(!sequenceMoreRecent(sequence, ack, maxSequence))")
 	}
 	if sequence > ack {
 		if ack >= 33 {
@@ -72,7 +72,7 @@ func bitIndexForSequence(sequence, ack, maxSequence uint) uint {
 		panic("assert(ack >= 1)")
 	}
 	if sequence > ack-1 {
-		panic("passert(sequence <= ack-1)")
+		panic("assert(sequence <= ack-1)")
 	}
 	return ack - 1 - sequence
 }

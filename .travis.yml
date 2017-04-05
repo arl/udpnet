@@ -18,4 +18,4 @@ before_install:
 script:
 # ./golint.bash
 - go test ./... -v
-- ./cover.sh
+- ./cover.sh --exclude examples

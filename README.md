@@ -19,6 +19,6 @@ Game Network Protocol][1].
 # License
 MIT
 
-[1]: http://gafferongames.com/building-a-game-network-protocol" "Gaffer on Games - Building a Game Network Protocol"
+[1]: https://gafferongames.com/categories/building-a-game-network-protocol/ "Gaffer on Games - Building a Game Network Protocol"
 [2]: ./LICENSE "License"
 
